@@ -11,18 +11,19 @@ router = APIRouter(
 
 
 
+
 @router.post("/register")
 def register_user(user: UserRegister):
     return register_user_service(
         username=user.username,
-        email=user.email
+        email=user.email,
+        password=user.password
     )
-
 
 
 @router.post("/login")
 def login_user(user: UserLogin):
     return login_user_service(
-        email=user.email
+        email=user.email,
+        password=user.password
     )
-
