@@ -5,6 +5,7 @@ from app.routers import root
 from app.routers import auth
 from app.routers import places
 from app.routers import missions
+from app.routers import checkins
 
 app = FastAPI(
     title="MOVETREE API",
@@ -17,4 +18,5 @@ app.include_router(root.router)
 app.include_router(auth.router)
 app.include_router(places.router)
 app.include_router(missions.router)
+app.include_router(checkins.router)
 

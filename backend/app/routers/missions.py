@@ -1,5 +1,10 @@
 
-from fastapi import APIRouter, HTTPException
+from uuid import UUID
+
+from fastapi import APIRouter, HTTPException, Depends
+
+from app.dependencies import get_current_user
+
 
 router = APIRouter(
     prefix="/missions",
@@ -7,81 +12,61 @@ router = APIRouter(
 )
 
 
-# Temporary sample data
-missions = [
-    {
-        "id": 1,
-        "name": "First Step",
-        "description": "Check in at one nature location.",
-        "type": "daily",
-        "condition": {
-            "action": "checkin",
-            "target_count": 1
-        },
-        "points": 10
-    },
-    {
-        "id": 2,
-        "name": "Nature Explorer",
-        "description": "Check in at two nature locations.",
-        "type": "daily",
-        "condition": {
-            "action": "checkin",
-            "target_count": 2
-        },
-        "points": 20
-    },
-    {
-        "id": 3,
-        "name": "Green Moment",
-        "description": "Take one photo of nature.",
-        "type": "daily",
-        "condition": {
-            "action": "take_photo",
-            "target_count": 1
-        },
-        "points": 15
-    },
-    {
-        "id": 4,
-        "name": "Benjakitti Explorer",
-        "description": "Check in at Benjakitti Park.",
-        "type": "permanent",
-        "condition": {
-            "action": "checkin",
-            "place_id": 2
-        },
-        "points": 30
-    },
-    {
-        "id": 5,
-        "name": "Park Hopper",
-        "description": "Check in at five different nature locations.",
-        "type": "permanent",
-        "condition": {
-            "action": "checkin",
-            "target_count": 5,
-            "unique_places": True
-        },
-        "points": 50
-    }
-]
-
-
 @router.get("/")
-def get_missions():
-    return {
-        "missions": missions
-    }
+def get_missions(
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        client = current_user["client"]
+
+        response = (
+            client.table("missions")
+            .select("*")
+            .eq("is_active", True)
+            .execute()
+        )
+
+        return {
+            "missions": response.data
+        }
+
+    except Exception as e:
+        print("GET MISSIONS ERROR:", repr(e))
+        raise HTTPException(
+            status_code=400,
+            detail="Could not retrieve missions"
+        )
 
 
 @router.get("/{mission_id}")
-def get_mission_by_id(mission_id: int):
-    for mission in missions:
-        if mission["id"] == mission_id:
-            return mission
+def get_mission_by_id(
+    mission_id: UUID,
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        client = current_user["client"]
 
-    raise HTTPException(
-        status_code=404,
-        detail="Mission not found"
-    )
+        response = (
+            client.table("missions")
+            .select("*")
+            .eq("mission_id", str(mission_id))
+            .eq("is_active", True)
+            .execute()
+        )
+
+        if not response.data:
+            raise HTTPException(
+                status_code=404,
+                detail="Mission not found"
+            )
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("GET MISSION ERROR:", repr(e))
+        raise HTTPException(
+            status_code=400,
+            detail="Could not retrieve mission"
+        )

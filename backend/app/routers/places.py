@@ -1,5 +1,5 @@
-
 from fastapi import APIRouter, HTTPException
+from app.database import supabase
 
 router = APIRouter(
     prefix="/places",
@@ -7,47 +7,34 @@ router = APIRouter(
 )
 
 
-# Temporary sample data
-places = [
-    {
-        "id": 1,
-        "name": "Lumphini Park",
-        "description": "A large public park with green spaces and walking paths.",
-        "location": "Bangkok, Thailand",
-        "activities": ["Walking", "Photography", "Bird Watching"]
-    },
-    {
-        "id": 2,
-        "name": "Benjakitti Park",
-        "description": "A public park with a lake, wetlands, and nature trails.",
-        "location": "Bangkok, Thailand",
-        "activities": ["Walking", "Cycling", "Photography"]
-    },
-    {
-        "id": 3,
-        "name": "Chatuchak Park",
-        "description": "A green public park suitable for relaxing and outdoor activities.",
-        "location": "Bangkok, Thailand",
-        "activities": ["Walking", "Jogging", "Photography"]
-    }
-]
-
-
 @router.get("/")
 def get_places():
-    return {
-        "places": places
-    }
+    response = (
+        supabase
+        .table("green_areas")
+        .select("*")
+        .execute()
+    )
 
+    return {
+        "places": response.data
+    }
 
 
 @router.get("/{place_id}")
-def get_place_by_id(place_id: int):
-    for place in places:
-        if place["id"] == place_id:
-            return place
-
-    raise HTTPException(
-        status_code=404,
-        detail="Place not found"
+def get_place_by_id(place_id: str):
+    response = (
+        supabase
+        .table("green_areas")
+        .select("*")
+        .eq("area_id", place_id)
+        .execute()
     )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Place not found"
+        )
+
+    return response.data[0]

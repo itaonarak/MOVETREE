@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.schemas.user import UserRegister, UserLogin
 from app.services.user_service import (
     register_user_service,
-    login_user_service
+    login_user_service,
 )
 router = APIRouter(
     prefix="/auth",
@@ -24,6 +24,8 @@ def register_user(user: UserRegister):
 @router.post("/login")
 def login_user(user: UserLogin):
     return login_user_service(
-        email=user.email,
+        username=user.username,
         password=user.password
     )
+
+
