@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "expo.vscode-expo-tools",
+    "bradlc.vscode-tailwindcss",
+    "msjsdiag.vscode-react-native",
+    "DiemasMichiels.emulate",
+    "esbenp.prettier-vscode",
+    "mobilenext.mobiledeck"
+  ]
+}
