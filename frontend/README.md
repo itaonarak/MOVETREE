@@ -80,10 +80,10 @@ Open the `frontend` folder in VS Code and click **Install** when it suggests the
 | 2 | Create account| `src/app/register.jsx`       | `/register`      |
 | 3 | Assistance    | `src/app/assistance.jsx`     | `/assistance`    |
 | 4 | Feed          | `src/app/feed.jsx`           | `/feed`          |
-| 5 | Notifications | `src/app/notifications.jsx`  | `/notifications` |
+| 5 | Notifications (blank for now) | `src/app/notifications.jsx`  | `/notifications` |
 
 Flow: Login → Feed (any username + password works for now). Login → "สร้างบัญชีผู้ใช้" → Create account → Feed.
-Feed → bell icon → Notifications. The log-out icon on Notifications returns to Login.
+Feed → bell icon → Notifications (empty page for now; back arrow returns to Feed).
 
 ## Project structure
 
@@ -120,5 +120,6 @@ npx expo install <pkg>  # add a package (picks the version that matches Expo)
 ## Next steps
 
 - Hook `handleLogin` / `handleCreate` (marked `TODO`) up to the backend in `../backend`.
-- Replace the sample data in `feed.jsx` / `notifications.jsx` with real API data.
+- Replace the sample data in `feed.jsx` with real API data.
+- Build the notifications page (`notifications.jsx` is currently an empty placeholder).
 - Add a new page: create `src/app/<name>.jsx`, add it to the `Stack` in `src/app/_layout.jsx`, and link to it with `router.push("/<name>")`.
