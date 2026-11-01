@@ -6,11 +6,24 @@ from app.routers import auth
 from app.routers import places
 from app.routers import missions
 from app.routers import checkins
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(
     title="MOVETREE API",
     description="Backend API for the MOVETREE application",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8081",
+        "http://127.0.0.1:8081",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(health.router)

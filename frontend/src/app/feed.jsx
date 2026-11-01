@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
-import { PostCard } from "@/components/Post";
+import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 

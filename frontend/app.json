@@ -22,7 +22,8 @@
       "expo-font",
       "expo-system-ui",
       "./plugins/withNoForceDark",
-      "expo-image"
+      "expo-image",
+      "expo-secure-store"
     ],
     "scheme": "swproject",
     "experiments": {
