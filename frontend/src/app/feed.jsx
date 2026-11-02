@@ -24,6 +24,7 @@ export default function FeedScreen() {
   function handleTab(tab) {
     // TODO: navigate to camera / tasks / profile pages once they exist
     if (tab === "home") return;
+    if (tab === "profile") router.push("/profile");
   }
 
   return (

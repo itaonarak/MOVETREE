@@ -14,8 +14,12 @@ export function BottomNav({ active, onPress }) {
   const insets = useSafeAreaInsets();
   return (
     <View
-      className="absolute left-10 right-10 h-14 flex-row items-center justify-around rounded-2xl bg-sage-light/80"
-      style={{ bottom: insets.bottom + 16, elevation: 6 }}
+      className="absolute left-10 right-10 h-14 flex-row items-center justify-around rounded-2xl"
+      style={{
+        bottom: insets.bottom + 16,
+        elevation: 6,
+        backgroundColor: "rgba(143, 160, 125, 0.75)",
+      }}
     >
       {TABS.map(({ key, icon }) => (
         <Pressable

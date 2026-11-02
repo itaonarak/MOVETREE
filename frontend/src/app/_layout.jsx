@@ -31,6 +31,7 @@ export default function RootLayout() {
         <Stack.Screen name="assistance" />
         <Stack.Screen name="feed" />
         <Stack.Screen name="notifications" />
+        <Stack.Screen name="profile" />
       </Stack>
     </>
   );
