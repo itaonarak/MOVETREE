@@ -39,8 +39,8 @@ export default function RegisterScreen() {
       next.username = "กรุณาตั้งชื่อผู้ใช้";
     }
 
-    if (password.length < 6) {
-      next.password = "อย่างน้อย 6 ตัวอักษร";
+    if (password.length < 8) {
+      next.password = "อย่างน้อย 8 ตัวอักษร";
     }
 
     if (confirm !== password) {
