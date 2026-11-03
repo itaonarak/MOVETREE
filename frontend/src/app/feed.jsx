@@ -22,9 +22,13 @@ export default function FeedScreen() {
   const insets = useSafeAreaInsets();
 
   function handleTab(tab) {
-    // TODO: navigate to camera / tasks / profile pages once they exist
-    if (tab === "home") return;
+  if (tab === "home") return;
+
+  if (tab === "profile") {
+    router.push("/profile");
+    return;
   }
+}
 
   return (
     <Screen padBottom={false}>
