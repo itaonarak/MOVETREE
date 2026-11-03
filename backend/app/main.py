@@ -1,11 +1,6 @@
 
 from fastapi import FastAPI
-from app.routers import health
-from app.routers import root
-from app.routers import auth
-from app.routers import places
-from app.routers import missions
-from app.routers import checkins
+from app.routers import auth, checkins, health, missions, places, posts, root
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -32,4 +27,4 @@ app.include_router(auth.router)
 app.include_router(places.router)
 app.include_router(missions.router)
 app.include_router(checkins.router)
-
+app.include_router(posts.router)
