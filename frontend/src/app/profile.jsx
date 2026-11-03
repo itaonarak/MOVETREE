@@ -27,6 +27,17 @@ const profile = () => {
     if (tab === "home") router.push("/feed");
     if (tab === "profile") return;
   }
+
+  function handleProfilePages(page) {
+    switch (page) {
+      case "personalInfo":
+        router.push("/personalInfo");
+        break;
+
+      default:
+        break;
+    }
+  }
   return (
     <Screen>
       {/* header */}
@@ -70,18 +81,24 @@ const profile = () => {
         {/* to other 4 pages */}
         <View>
           {/* ข้อมูลส่วนตัว */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
-              <Image source={require("assets/icon/profile/info.png")}></Image>
-              <Text style={styles.profileTabsText}>ข้อมูลส่วนตัว</Text>
+          <Pressable
+            onPress={() => {
+              handleProfilePages("personalInfo");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image source={require("assets/icon/profile/info.png")}></Image>
+                <Text style={styles.profileTabsText}>ข้อมูลส่วนตัว</Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color="rgb(31, 42, 31)"
+                style={{ alignSelf: "center", marginRight: "5%" }}
+              />
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
           {/* ประวัติโพสต์ */}
           <View style={styles.profileTabs}>
