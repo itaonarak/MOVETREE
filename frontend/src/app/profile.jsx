@@ -33,6 +33,12 @@ const profile = () => {
       case "personalInfo":
         router.push("/personalInfo");
         break;
+      case "postHistory":
+        router.push("/postHistory");
+        break;
+      case "missionHistory":
+        router.push("/missionHistory");
+        break;
 
       default:
         break;
@@ -101,20 +107,26 @@ const profile = () => {
           </Pressable>
 
           {/* ประวัติโพสต์ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
-              <Image
-                source={require("assets/icon/profile/postHistory.png")}
-              ></Image>
-              <Text style={styles.profileTabsText}>ประวัติโพสต์</Text>
+          <Pressable
+            onPress={() => {
+              handleProfilePages("postHistory");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/profile/postHistory.png")}
+                ></Image>
+                <Text style={styles.profileTabsText}>ประวัติโพสต์</Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color="rgb(31, 42, 31)"
+                style={{ alignSelf: "center", marginRight: "5%" }}
+              />
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
           {/* ประวัติเช็กอิน */}
           <View style={styles.profileTabs}>
@@ -133,20 +145,26 @@ const profile = () => {
           </View>
 
           {/* ประวัติภารกิจ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
-              <Image
-                source={require("assets/icon/profile/missionHistory.png")}
-              ></Image>
-              <Text style={styles.profileTabsText}>ประวัติภารกิจ</Text>
+          <Pressable
+            onPress={() => {
+              handleProfilePages("missionHistory");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/profile/missionHistory.png")}
+                ></Image>
+                <Text style={styles.profileTabsText}>ประวัติภารกิจ</Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color="rgb(31, 42, 31)"
+                style={{ alignSelf: "center", marginRight: "5%" }}
+              />
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
         </View>
         {/* end of to other 4 pages */}
       </View>
