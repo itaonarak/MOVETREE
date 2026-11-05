@@ -1,0 +1,10 @@
+{
+  "name": "MOVETREE",
+  "private": true,
+  "scripts": {
+    "install:frontend": "npm --prefix frontend install",
+    "start": "npm --prefix frontend start",
+    "web": "npm --prefix frontend run web",
+    "android": "npm --prefix frontend run android"
+  }
+}

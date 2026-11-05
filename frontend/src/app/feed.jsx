@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
@@ -9,6 +10,13 @@ import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { apiRequest } from "@/services/api";
+
+// assets/icon/feed file names don't match their drawings — mapped by content.
+const HEADER_ICONS = {
+  location: require("assets/icon/feed/menu2,_active.svg"), // outline map pin
+  bell: require("assets/icon/feed/map2_active.svg"), // outline bell
+};
+const HEADER_TINT = "#E8F5E9"; // light icons on the dark green header
 
 export default function FeedScreen() {
   const insets = useSafeAreaInsets();
@@ -61,6 +69,11 @@ export default function FeedScreen() {
   function handleTab(tab) {
     if (tab === "home") return;
 
+    if (tab === "camera") {
+      router.push("/Camera");
+      return;
+    }
+
     if (tab === "profile") {
       router.push("/profile");
       return;
@@ -70,8 +83,12 @@ export default function FeedScreen() {
   return (
     <Screen padBottom={false}>
       <View className="h-14 flex-row items-center justify-between px-5">
-        <Pressable hitSlop={10}>
-          <Ionicons name="location-outline" size={24} color="#E8F5E9" />
+        <Pressable hitSlop={10} accessibilityLabel="location">
+          <Image
+            source={HEADER_ICONS.location}
+            style={{ width: 24, height: 24 }}
+            tintColor={HEADER_TINT}
+          />
         </Pressable>
 
         <Logo height={30} />
@@ -79,11 +96,12 @@ export default function FeedScreen() {
         <Pressable
           onPress={() => router.push("/notifications")}
           hitSlop={10}
+          accessibilityLabel="notifications"
         >
-          <Ionicons
-            name="notifications-outline"
-            size={24}
-            color="#E8F5E9"
+          <Image
+            source={HEADER_ICONS.bell}
+            style={{ width: 24, height: 24 }}
+            tintColor={HEADER_TINT}
           />
         </Pressable>
       </View>
@@ -128,7 +146,7 @@ export default function FeedScreen() {
           />
         )}
 
-        <BottomNav active="home" onPress={handleTab} />
+        <BottomNav active="home" onPress={handleTab} transparent />
       </View>
     </Screen>
   );

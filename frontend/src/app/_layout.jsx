@@ -35,7 +35,12 @@ export default function RootLayout() {
         <Stack.Screen name="personalInfo" />
         <Stack.Screen name="postHistory" />
         <Stack.Screen name="missionHistory" />
+<<<<<<< Updated upstream
         <Stack.Screen name="friendsList" />
+=======
+        <Stack.Screen name="Camera" />
+        <Stack.Screen name="get_dress" />
+>>>>>>> Stashed changes
       </Stack>
     </>
   );

@@ -23,7 +23,19 @@
       "expo-system-ui",
       "./plugins/withNoForceDark",
       "expo-image",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to use the camera to take mission photos."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to pick photos from your gallery."
+        }
+      ]
     ],
     "scheme": "swproject",
     "experiments": {
