@@ -39,6 +39,9 @@ const profile = () => {
       case "missionHistory":
         router.push("/missionHistory");
         break;
+        case "friendsList":
+        router.push("/friendsList");
+        break;
 
       default:
         break;
@@ -57,7 +60,9 @@ const profile = () => {
         ></Image>
         <Text style={styles.headerText}>โปรไฟล์</Text>
         {/* FRIEND BUTTON IS NOT READY YET THIS IS JUST A PLACEHOLDER */}
-        <Pressable onPress={handleTab} hitSlop={10}>
+        <Pressable onPress={() => {
+              handleProfilePages("friendsList");
+            }} hitSlop={10}>
           <Image
             source={require("assets/icon/profile/friend1.png")}
             style={{ size: 24 }}
