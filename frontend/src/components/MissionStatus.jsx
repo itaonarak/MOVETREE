@@ -25,15 +25,16 @@ export function MissionStatus({
   return (
     <View style={styles.missionHistoryTabs}>
       <Image
-        source={require("assets/icon/mission/flower.png")}
+        source={require("assets/icon/missionHistory/flower2_normal.svg")}
         style={{
           marginLeft: "10%",
+          tintColor: "#5F6B5F",
         }}
       ></Image>
       <Text style={[styles.missionHistoryTabsText, styles.text]}>{task}</Text>
       <View style={styles.missionReward}>
         <Image
-          source={require("assets/icon/profile/coin.png")}
+          source={require("assets/icon/missionHistory/coin_normal.svg")}
           style={{ height: "15px", width: "15px" }}
         ></Image>
         <Text style={[styles.text, { fontSize: "10px" }]}>{coin}</Text>
@@ -45,7 +46,7 @@ export function MissionStatus({
       </View>
       <View style={styles.missionTick}>
         <Image
-          source={require("assets/icon/mission/tick.png")}
+          source={require("assets/icon/missionHistory/tick_normal.svg")}
           style={{ opacity: done === max ? 1 : 0 }}
         ></Image>
       </View>
@@ -68,6 +69,11 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderColor: "#d9d9d9",
     borderWidth: 1,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   missionHistoryTabsText: {
     fontSize: 16,
@@ -90,5 +96,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: "10%",
     backgroundColor: "#e8f5e9",
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+    alignSelf: "center",
   },
 });

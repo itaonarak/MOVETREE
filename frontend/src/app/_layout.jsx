@@ -36,6 +36,9 @@ export default function RootLayout() {
         <Stack.Screen name="postHistory" />
         <Stack.Screen name="missionHistory" />
         <Stack.Screen name="friendsList" />
+        <Stack.Screen name="checkinHistory" />
+        <Stack.Screen name="changeEmail" />
+        <Stack.Screen name="changePassword" />
       </Stack>
     </>
   );

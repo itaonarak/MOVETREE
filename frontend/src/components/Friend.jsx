@@ -14,9 +14,10 @@ export function Friend({
   return (
     <View style={styles.friendsList}>
       <Image
-        source={require("assets/icon/mission/flower.png")}
+        source={require("assets/icon/missionHistory/flower2_normal.svg")}
         style={{
           marginLeft: "1rem",
+          tintColor: "#5F6B5F",
         }}
       ></Image>
 
@@ -25,7 +26,10 @@ export function Friend({
       {/* Show unfriend button only if they are currently a friend */}
       {isFriend && !isPending && (
         <Pressable onPress={() => onUnfriend(id)} style={styles.unfriendButton}>
-          <Ionicons name="close-outline" size={24} color="#1F2A1F" />
+          <Image
+            source={require("assets/icon/friendsList/X_normal.svg")}
+            style={[styles.bodyIcon]}
+          ></Image>
         </Pressable>
       )}
 
@@ -59,11 +63,21 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderColor: "#d9d9d9",
     borderWidth: 1,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   friendsListText: {
     fontSize: 16,
     lineHeight: 24,
     color: "#1f2a1f",
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
   },
   unfriendButton: {
     height: 24,

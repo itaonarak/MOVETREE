@@ -1,19 +1,9 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Pressable,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import React from "react";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
-import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
-import { Logo } from "@/components/Logo";
 
 const profile = () => {
   const insets = useSafeAreaInsets();
@@ -39,7 +29,10 @@ const profile = () => {
       case "missionHistory":
         router.push("/missionHistory");
         break;
-        case "friendsList":
+      case "checkinHistory":
+        router.push("/checkinHistory");
+        break;
+      case "friendsList":
         router.push("/friendsList");
         break;
 
@@ -55,17 +48,20 @@ const profile = () => {
         style={{ justifyContent: "space-between" }}
       >
         <Image
-          source={require("assets/icon/profile/plantBox.png")}
-          style={{ size: 24 }}
+          source={require("assets/icon/header/forest_normal.svg")}
+          style={styles.headerIcon}
         ></Image>
         <Text style={styles.headerText}>โปรไฟล์</Text>
         {/* FRIEND BUTTON IS NOT READY YET THIS IS JUST A PLACEHOLDER */}
-        <Pressable onPress={() => {
-              handleProfilePages("friendsList");
-            }} hitSlop={10}>
+        <Pressable
+          onPress={() => {
+            handleProfilePages("friendsList");
+          }}
+          hitSlop={10}
+        >
           <Image
-            source={require("assets/icon/profile/friend1.png")}
-            style={{ size: 24 }}
+            source={require("assets/icon/header/friends1_normal.svg")}
+            style={styles.headerIcon}
           ></Image>
         </Pressable>
       </View>
@@ -77,12 +73,14 @@ const profile = () => {
           <View style={styles.avatarPreview}>
             <Image source={require("assets/profile/demo.png")}></Image>
             <Image
-              source={require("assets/icon/profile/dress.png")}
-              style={styles.dressIcon}
+              source={require("assets/icon/profile/dress1_normal.svg")}
+              style={[styles.dressIcon, styles.bodyIcon]}
             ></Image>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
             <View style={styles.currentCoin}>
-              <Image source={require("assets/icon/profile/coin.png")}></Image>
+              <Image
+                source={require("assets/icon/profile/coin_normal.svg")}
+              ></Image>
               <Text style={styles.currentCoinText}>999</Text>
             </View>
           </View>
@@ -99,15 +97,16 @@ const profile = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image source={require("assets/icon/profile/info.png")}></Image>
+                <Image
+                  source={require("assets/icon/profile/information_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
                 <Text style={styles.profileTabsText}>ข้อมูลส่วนตัว</Text>
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color="rgb(31, 42, 31)"
-                style={{ alignSelf: "center", marginRight: "5%" }}
-              />
+              <Image
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
+              ></Image>
             </View>
           </Pressable>
 
@@ -120,34 +119,38 @@ const profile = () => {
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <Image
-                  source={require("assets/icon/profile/postHistory.png")}
+                  source={require("assets/icon/profile/postHistory_normal.svg")}
+                  style={styles.bodyIcon}
                 ></Image>
                 <Text style={styles.profileTabsText}>ประวัติโพสต์</Text>
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color="rgb(31, 42, 31)"
-                style={{ alignSelf: "center", marginRight: "5%" }}
-              />
+              <Image
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
+              ></Image>
             </View>
           </Pressable>
 
           {/* ประวัติเช็กอิน */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          <Pressable
+            onPress={() => {
+              handleProfilePages("checkinHistory");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/profile/checkinHistory_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>ประวัติเช็กอิน</Text>
+              </View>
               <Image
-                source={require("assets/icon/profile/checkinHistory.png")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>ประวัติเช็กอิน</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
           {/* ประวัติภารกิจ */}
           <Pressable
@@ -158,16 +161,15 @@ const profile = () => {
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <Image
-                  source={require("assets/icon/profile/missionHistory.png")}
+                  source={require("assets/icon/profile/missionHistory_normal.svg")}
+                  style={styles.bodyIcon}
                 ></Image>
                 <Text style={styles.profileTabsText}>ประวัติภารกิจ</Text>
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color="rgb(31, 42, 31)"
-                style={{ alignSelf: "center", marginRight: "5%" }}
-              />
+              <Image
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
+              ></Image>
             </View>
           </Pressable>
         </View>
@@ -192,6 +194,16 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
   },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+  },
   avatarPreviewZone: {
     width: "100%",
     flexDirection: "column",
@@ -205,6 +217,10 @@ const styles = StyleSheet.create({
     top: "10%",
     right: "5%",
     position: "absolute",
+  },
+  moreIcon: {
+    alignSelf: "center",
+    marginRight: "5%",
   },
   profileUsernameText: {
     fontSize: 24,

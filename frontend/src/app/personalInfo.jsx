@@ -1,19 +1,10 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Pressable,
-  Image,
-} from "react-native";
-import React from "react";
-import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import React, { useState, useCallback } from "react";
+import { router, useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
-import { PostCard } from "@/components/PostCard";
-import { BottomNav } from "@/components/BottomNav";
-import { Logo } from "@/components/Logo";
+import { AccountPopup } from "@/components/AccountPopup";
+import { VerificationPopup } from "@/components/VerificationPopup";
 
 const personalInfo = () => {
   const insets = useSafeAreaInsets();
@@ -22,22 +13,27 @@ const personalInfo = () => {
     else router.replace("/profile");
   }
 
-  function handleTab(tab) {
-    // TODO: navigate to camera / tasks / profile pages once they exist
-    if (tab === "home") router.push("/feed");
-    if (tab === "profile") return;
+  const [popupState, setPopupState] = useState("none");
+
+  useFocusEffect(
+    useCallback(() => {
+      // This part runs when the screen comes into focus
+      return () => {
+        // This clean-up function runs automatically the exact instant the user navigates AWAY from this page
+        setPopupState("none");
+      };
+    }, []),
+  );
+
+  function goBack() {
+    if (router.canGoBack()) router.back();
+    else router.replace("/profile");
   }
 
-  function handleProfilePages(page) {
-    switch (page) {
-      case "personalInfo":
-        router.push("/personalInfo");
-        break;
+  const handlePopup = (action) => {
+    setPopupState(action);
+  };
 
-      default:
-        break;
-    }
-  }
   return (
     <Screen>
       {/* header */}
@@ -46,9 +42,12 @@ const personalInfo = () => {
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Ionicons name="chevron-back" size={24} color="#E8F5E9" />
+          <Image
+            source={require("assets/icon/header/back_normal.svg")}
+            style={styles.headerIcon}
+          ></Image>
         </Pressable>
-        <Text style={styles.headerText}>ข้อมูลส่วนตัว</Text>
+        <Text style={styles.headerText}>จัดการบัญชี</Text>
       </View>
       {/* end of header */}
 
@@ -63,8 +62,8 @@ const personalInfo = () => {
           <View style={styles.profileNameArea}>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
             <Image
-              source={require("assets/icon/personalInfo/rename.png")}
-              style={{ alignSelf: "center" }}
+              source={require("assets/icon/personalInfo/rename1_normal.svg")}
+              style={styles.bodyIcon}
             ></Image>
           </View>
         </View>
@@ -72,72 +71,103 @@ const personalInfo = () => {
 
         {/* to other 4 pages */}
         <View>
-          {/* ข้อมูลส่วนตัว */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* อีเมล */}
+          <Pressable
+            onPress={() => {
+              handlePopup("changeEmail");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/userEmail_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>อีเมล</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/userEmail.png")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>อีเมล</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติโพสต์ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* รหัสผ่าน */}
+          <Pressable
+            onPress={() => {
+              handlePopup("changePassword");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/keyEdit_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/keyEdit.png")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติเช็กอิน */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* Sign Out */}
+          <Pressable
+            onPress={() => {
+              handlePopup("signOut");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/signOut_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/signOut.png")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติภารกิจ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* Delete Account */}
+          <Pressable
+            onPress={() => {
+              handlePopup("deleteAccount");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/deleteAccount_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/deleteAccount.png")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
         </View>
         {/* end of to other 4 pages */}
       </View>
+      {!(popupState === "none") &&
+        !(popupState === "changeEmail") &&
+        !(popupState === "changePassword") && (
+          <AccountPopup action={popupState}></AccountPopup>
+        )}
+
+      {!(popupState === "none") &&
+        !(popupState === "signOut") &&
+        !(popupState === "deleteAccount") && (
+          <VerificationPopup action={popupState}></VerificationPopup>
+        )}
     </Screen>
   );
 };
@@ -171,6 +201,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 30,
     fontFamily: "BaiJamjuree_600SemiBold",
+  },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+    alignSelf: "center",
+  },
+  moreIcon: {
+    alignSelf: "center",
+    marginRight: "5%",
   },
   profileTabs: {
     height: 50,

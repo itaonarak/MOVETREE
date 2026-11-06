@@ -87,7 +87,10 @@ const friendList = () => {
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Ionicons name="chevron-back" size={24} color="#E8F5E9" />
+          <Image
+            source={require("assets/icon/header/back_normal.svg")}
+            style={styles.headerIcon}
+          ></Image>
         </Pressable>
         <Text style={styles.headerText}>เพื่อน</Text>
       </View>
@@ -97,6 +100,7 @@ const friendList = () => {
       <View style={styles.extendedHeader}>
         <Pressable
           onPress={() => {
+            clearInput();
             setFilterType("friend");
           }}
           style={[
@@ -114,6 +118,7 @@ const friendList = () => {
         </Pressable>
         <Pressable
           onPress={() => {
+            clearInput();
             setFilterType("pending");
           }}
           style={[
@@ -134,7 +139,10 @@ const friendList = () => {
       <View className="flex-1 bg-sage-light">
         <View style={styles.searchArea}>
           <View style={styles.searchButton}>
-            <Ionicons name="search-outline" size={24} color="#1F2A1F" />
+            <Image
+              source={require("assets/icon/friendsList/search_normal.svg")}
+              style={styles.bodyIcon}
+            ></Image>
           </View>
           {/* Search Bar */}
           <TextInput
@@ -180,6 +188,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: "50%",
     transform: "translateX(50%)",
+  },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+    alignSelf: "center",
   },
   extendedHeader: {
     flexDirection: "row",
