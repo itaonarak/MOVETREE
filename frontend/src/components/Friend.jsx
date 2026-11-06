@@ -14,7 +14,7 @@ export function Friend({
   return (
     <View style={styles.friendsList}>
       <Image
-        source={require("assets/icon/mission/flower.png")}
+        source={require("assets/icon/missionHistory/flower.png")}
         style={{
           marginLeft: "1rem",
         }}

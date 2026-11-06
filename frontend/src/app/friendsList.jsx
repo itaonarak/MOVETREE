@@ -138,7 +138,7 @@ const friendList = () => {
           </View>
           {/* Search Bar */}
           <TextInput
-            style={styles.searchBar}
+            style={[styles.searchBar, { fontFamily: "BaiJamjuree_400Regular" }]}
             placeholder="Search here..."
             value={search}
             onChangeText={handleSearch}

@@ -25,7 +25,7 @@ export function MissionStatus({
   return (
     <View style={styles.missionHistoryTabs}>
       <Image
-        source={require("assets/icon/mission/flower.png")}
+        source={require("assets/icon/missionHistory/flower.png")}
         style={{
           marginLeft: "10%",
         }}
@@ -45,7 +45,7 @@ export function MissionStatus({
       </View>
       <View style={styles.missionTick}>
         <Image
-          source={require("assets/icon/mission/tick.png")}
+          source={require("assets/icon/missionHistory/tick.png")}
           style={{ opacity: done === max ? 1 : 0 }}
         ></Image>
       </View>

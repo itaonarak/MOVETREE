@@ -25,6 +25,7 @@ const personalInfo = () => {
   function handleTab(tab) {
     // TODO: navigate to camera / tasks / profile pages once they exist
     if (tab === "home") router.push("/feed");
+    if (tab === "tasks") router.push("/mission");
     if (tab === "profile") return;
   }
 

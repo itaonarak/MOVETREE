@@ -8,6 +8,7 @@ import { Screen } from "@/components/Screen";
 import { Avatar } from "@/components/Avatar";
 import { useOutfit } from "@/services/outfit";
 import { BottomNav } from "@/components/BottomNav";
+import { setDraftPost } from "@/services/draftPost";
 
 // expo-camera's CameraView is backed by CameraX on Android.
 // ratio="4:3" locks the sensor output to 4:3; the frame below is 3:4 (portrait),
@@ -76,28 +77,28 @@ export default function Camera() {
   const [facing, setFacing] = useState("back");
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [photo, setPhoto] = useState(null); // uri of the last captured / picked photo
   const [showAvatar, setShowAvatar] = useState(true); // toggle switch
   const { equipped } = useOutfit(); // outfit chosen on the get_dress screen
 
   function handleTab(tab) {
     if (tab === "camera") return;
     if (tab === "home") router.replace("/feed");
+    if (tab === "tasks") router.replace("/mission");
     if (tab === "profile") router.replace("/profile");
   }
 
+  // Hand the photo (plus whether the character is shown) to the upload page
+  function openUpload(uri) {
+    setDraftPost({ uri, showAvatar, outfit: equipped });
+    router.push("/upload");
+  }
+
   async function takePhoto() {
-    // Tapping the shutter while a photo is shown goes back to the live preview
-    if (photo) {
-      setPhoto(null);
-      return;
-    }
     if (!cameraRef.current || !ready || busy) return;
     setBusy(true);
     try {
       const result = await cameraRef.current.takePictureAsync({ quality: 0.8 });
-      setPhoto(await cropTo3x4OnWeb(result.uri));
-      // TODO: upload / attach the photo to a mission post
+      openUpload(await cropTo3x4OnWeb(result.uri));
     } catch (e) {
       console.warn("takePictureAsync failed", e);
     } finally {
@@ -112,7 +113,7 @@ export default function Camera() {
       aspect: [3, 4], // keep gallery photos in the same 4:3 frame
       quality: 0.8,
     });
-    if (!result.canceled) setPhoto(await cropTo3x4OnWeb(result.assets[0].uri));
+    if (!result.canceled) openUpload(await cropTo3x4OnWeb(result.assets[0].uri));
   }
 
   function flipCamera() {
@@ -139,10 +140,6 @@ export default function Camera() {
           </Pressable>
         </View>
       );
-    }
-
-    if (photo) {
-      return <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} contentFit="cover" />;
     }
 
     return (
@@ -186,16 +183,16 @@ export default function Camera() {
           <IconButton source={icons.gallery} size={34} onPress={pickFromGallery} />
           <Pressable
             onPress={takePhoto}
-            disabled={!permission?.granted || (!photo && (!ready || busy))}
+            disabled={!permission?.granted || !ready || busy}
             style={({ pressed }) => [styles.shutter, pressed && { transform: [{ scale: 0.94 }] }]}
             accessibilityRole="button"
-            accessibilityLabel={photo ? "ถ่ายใหม่" : "ถ่ายรูป"}
+            accessibilityLabel="ถ่ายรูป"
           />
           <IconButton
             source={icons.flip}
             size={30}
             onPress={flipCamera}
-            disabled={!permission?.granted || !!photo}
+            disabled={!permission?.granted}
           />
         </View>
       </View>

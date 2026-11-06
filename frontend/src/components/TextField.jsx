@@ -12,6 +12,7 @@ export function TextField({ icon, error, secure, ...inputProps }) {
         <TextInput
           className="ml-2 flex-1 text-base text-ink font-normal"
           placeholderTextColor="#6B7A68"
+          style={{ fontFamily: "BaiJamjuree_400Regular" }}
           secureTextEntry={secure}
           autoCapitalize="none"
           {...inputProps}

@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Web: Bai Jamjuree as the default font for every input and its placeholder */
+input,
+textarea,
+input::placeholder,
+textarea::placeholder {
+  font-family: "BaiJamjuree_400Regular", sans-serif;
+}

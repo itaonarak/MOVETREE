@@ -74,6 +74,11 @@ export default function FeedScreen() {
       return;
     }
 
+    if (tab === "tasks") {
+      router.push("/mission");
+      return;
+    }
+
     if (tab === "profile") {
       router.push("/profile");
       return;
