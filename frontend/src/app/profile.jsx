@@ -4,9 +4,11 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { BottomNav } from "@/components/BottomNav";
+import { useOutfit } from "@/services/outfit";
 
 const profile = () => {
   const insets = useSafeAreaInsets();
+  const { coins } = useOutfit();
   function goBack() {
     if (router.canGoBack()) router.back();
     else router.replace("/feed");
@@ -83,7 +85,7 @@ const profile = () => {
               <Image
                 source={require("assets/icon/profile/coin_normal.svg")}
               ></Image>
-              <Text style={styles.currentCoinText}>999</Text>
+              <Text style={styles.currentCoinText}>{coins}</Text>
             </View>
           </View>
         </View>

@@ -64,7 +64,7 @@ const personalInfo = () => {
           <View style={styles.profileNameArea}>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
             <Image
-              source={require("assets/icon/personalInfo/rename.png")}
+              source={require("assets/icon/personalInfo/rename1_normal.svg")}
               style={{ alignSelf: "center" }}
             ></Image>
           </View>
@@ -77,7 +77,7 @@ const personalInfo = () => {
           <View style={styles.profileTabs}>
             <View style={styles.profileTabsInfo}>
               <Image
-                source={require("assets/icon/personalInfo/userEmail.png")}
+                source={require("assets/icon/personalInfo/userEmail_normal.svg")}
               ></Image>
               <Text style={styles.profileTabsText}>อีเมล</Text>
             </View>
@@ -93,7 +93,7 @@ const personalInfo = () => {
           <View style={styles.profileTabs}>
             <View style={styles.profileTabsInfo}>
               <Image
-                source={require("assets/icon/personalInfo/keyEdit.png")}
+                source={require("assets/icon/personalInfo/keyEdit_normal.svg")}
               ></Image>
               <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
             </View>
@@ -109,7 +109,7 @@ const personalInfo = () => {
           <View style={styles.profileTabs}>
             <View style={styles.profileTabsInfo}>
               <Image
-                source={require("assets/icon/personalInfo/signOut.png")}
+                source={require("assets/icon/personalInfo/signOut_normal.svg")}
               ></Image>
               <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
             </View>
@@ -125,7 +125,7 @@ const personalInfo = () => {
           <View style={styles.profileTabs}>
             <View style={styles.profileTabsInfo}>
               <Image
-                source={require("assets/icon/personalInfo/deleteAccount.png")}
+                source={require("assets/icon/personalInfo/deleteAccount_normal.svg")}
               ></Image>
               <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
             </View>

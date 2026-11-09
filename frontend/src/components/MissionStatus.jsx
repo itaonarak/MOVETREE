@@ -33,7 +33,7 @@ export function MissionStatus({
       <Text style={[styles.missionHistoryTabsText, styles.text]}>{task}</Text>
       <View style={styles.missionReward}>
         <Image
-          source={require("assets/icon/profile/coin.png")}
+          source={require("assets/icon/profile/coin_normal.svg")}
           style={{ height: "15px", width: "15px" }}
         ></Image>
         <Text style={[styles.text, { fontSize: "10px" }]}>{coin}</Text>

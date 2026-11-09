@@ -3,58 +3,60 @@ import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Screen } from "@/components/Screen";
-import { Avatar } from "@/components/Avatar";
-import { ITEMS, ITEMS_BY_ID, SLOTS } from "@/data/wardrobe";
+import { ArtCrop, Avatar } from "@/components/Avatar";
+import { ITEMS, ITEMS_BY_ID, TABS } from "@/data/wardrobe";
 import { buyItem, equipItem, unequipSlot, useOutfit } from "@/services/outfit";
 
 const icons = {
-  back: require("assets/get_dress/back_normal.svg"),
-  coin: require("assets/get_dress/coin_normal.svg"),
+  back: require("assets/icon/getdress/back_normal.svg"),
+  coin: require("assets/icon/getdress/coin_normal.svg"),
 };
 
-function Coin({ amount, size = 16, className = "" }) {
+const COLUMNS = 3;
+const MIN_ROWS = 3; // grid always shows at least this many rows of cells
+
+function Coin({ amount, size = 16, textClass = "text-ink-soft" }) {
   return (
-    <View className={`flex-row items-center ${className}`}>
+    <View className="flex-row items-center">
       <Image source={icons.coin} style={{ width: size, height: size }} contentFit="contain" />
-      <Text className="ml-1 font-semibold text-ink">{amount}</Text>
+      <Text className={`ml-1 font-medium text-sm ${textClass}`}>{amount}</Text>
     </View>
   );
 }
 
-function ItemCard({ item, owned, equipped, selected, onPress }) {
+function ItemCell({ item, owned, equipped, selected, onPress }) {
+  const border = { borderRightWidth: 1, borderBottomWidth: 1, borderColor: "#D3E3D4" };
+
+  // empty filler cell
+  if (!item) return <View className="aspect-square flex-1 bg-paper" style={border} />;
+
   return (
     <Pressable
       onPress={onPress}
-      className="m-[1%] items-center rounded-2xl bg-paper p-2"
-      // fixed width so a short last row doesn't stretch
-      style={{ width: "31.33%", borderWidth: 2, borderColor: selected ? "#3E513B" : "transparent" }}
+      className="aspect-square flex-1 items-center justify-center bg-paper"
+      style={[border, selected && { backgroundColor: "#D5E0CB" }]}
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={item.name}
     >
-      {/* Thumbnail: real artwork when available, colour swatch placeholder otherwise */}
-      <View className="aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-white">
-        {item.image ? (
-          <Image source={item.image} style={{ width: "100%", height: "100%" }} contentFit="contain" />
-        ) : (
-          <View
-            className="h-3/5 w-3/5 rounded-full"
-            style={{ backgroundColor: item.color, borderWidth: 1, borderColor: "#D3E3D4" }}
-          />
-        )}
-        {equipped && (
-          <View className="absolute right-1 top-1 rounded-full bg-brand px-1.5">
-            <Text className="text-[9px] font-semibold text-white">ใส่อยู่</Text>
-          </View>
-        )}
-      </View>
-      <Text className="mt-1 text-xs font-medium text-ink" numberOfLines={1}>
-        {item.name}
-      </Text>
-      {owned ? (
-        <Text className="text-[10px] text-ink-soft">มีแล้ว</Text>
+      {item.image && item.thumb ? (
+        <ArtCrop sources={[item.image]} view={item.thumb} style={{ width: "85%" }} />
       ) : (
-        <Coin amount={item.price} size={12} />
+        <View
+          className="h-1/2 w-1/2 rounded-full"
+          style={{ backgroundColor: item.color, borderWidth: 1, borderColor: "#D3E3D4" }}
+        />
+      )}
+
+      {equipped && (
+        <View className="absolute left-2.5 top-2.5 rounded-full bg-brand px-2 py-0.5">
+          <Text className="text-[9px] font-semibold text-white">ใส่อยู่</Text>
+        </View>
+      )}
+      {!owned && (
+        <View className="absolute bottom-2.5 right-3">
+          <Coin amount={item.price} size={12} />
+        </View>
       )}
     </Pressable>
   );
@@ -62,7 +64,7 @@ function ItemCard({ item, owned, equipped, selected, onPress }) {
 
 export default function GetDress() {
   const { coins, owned, equipped } = useOutfit();
-  const [slot, setSlot] = useState(SLOTS[0].key);
+  const [tab, setTab] = useState(TABS[0].key);
   const [selectedId, setSelectedId] = useState(null); // item being tried on
 
   const selected = selectedId ? ITEMS_BY_ID[selectedId] : null;
@@ -76,7 +78,15 @@ export default function GetDress() {
     [equipped, selected],
   );
 
-  const items = ITEMS.filter((i) => i.slot === slot);
+  // Items for the current tab, padded with empty cells to fill the grid
+  const cells = useMemo(() => {
+    const items =
+      tab === "owned"
+        ? ITEMS.filter((i) => owned.includes(i.id))
+        : ITEMS.filter((i) => i.category === tab);
+    const total = Math.max(MIN_ROWS * COLUMNS, Math.ceil(items.length / COLUMNS) * COLUMNS);
+    return [...items, ...Array(total - items.length).fill(null)];
+  }, [tab, owned]);
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -91,7 +101,7 @@ export default function GetDress() {
     setSelectedId(null);
   }
 
-  let actionLabel = "เลือกไอเทมเพื่อลองใส่";
+  let actionLabel = "";
   if (selected) {
     if (!isOwned) actionLabel = canAfford ? `ซื้อและใส่ • ${selected.price}` : "เหรียญไม่พอ";
     else actionLabel = isEquipped ? "ถอดออก" : "ใส่";
@@ -101,82 +111,87 @@ export default function GetDress() {
   return (
     <Screen>
       {/* header */}
-      <View className="h-14 flex-row items-center justify-between px-5">
-        <Pressable onPress={goBack} hitSlop={10} accessibilityLabel="back">
-          <Image source={icons.back} style={{ width: 24, height: 24 }} tintColor="#E8F5E9" />
+      <View className="h-16 flex-row items-center justify-center px-5">
+        <Pressable
+          onPress={goBack}
+          hitSlop={10}
+          accessibilityLabel="back"
+          className="absolute left-5"
+        >
+          <Image source={icons.back} style={{ width: 26, height: 26 }} tintColor="#FFFFFF" />
         </Pressable>
-        <Text className="text-lg font-semibold text-white">แต่งตัว</Text>
-        <View className="rounded-full bg-paper px-2.5 py-0.5">
-          <Coin amount={coins} />
-        </View>
+        <Text className="text-xl font-semibold text-white">แต่งตัว</Text>
       </View>
 
-      <View className="flex-1 bg-sage-light">
+      <View className="flex-1 bg-paper">
         {/* avatar stage */}
-        <View className="mx-5 mt-4 h-56 items-center justify-center rounded-3xl bg-paper">
-          <Avatar outfit={preview} style={{ height: "90%" }} />
+        <View className="h-80 items-center justify-center bg-sage-light">
+          <Avatar outfit={preview} style={{ height: "92%" }} />
+          <View className="absolute right-5 top-4">
+            <Coin amount={coins} size={18} />
+          </View>
           {selected && !isOwned && (
-            <View className="absolute left-3 top-3 rounded-full bg-accent px-2 py-0.5">
+            <View className="absolute left-5 top-4 rounded-full bg-accent px-2 py-0.5">
               <Text className="text-[10px] font-semibold text-white">กำลังลองใส่</Text>
             </View>
           )}
         </View>
 
-        {/* slot tabs */}
-        <View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}
-          >
-            {SLOTS.map((s) => {
-              const active = s.key === slot;
+        {/* category tabs */}
+        <View className="bg-brand">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {TABS.map((t, i) => {
+              const active = t.key === tab;
               return (
                 <Pressable
-                  key={s.key}
-                  onPress={() => setSlot(s.key)}
-                  className={`rounded-full px-4 py-1.5 ${active ? "bg-brand" : "bg-paper"}`}
+                  key={t.key}
+                  onPress={() => {
+                    setTab(t.key);
+                    setSelectedId(null);
+                  }}
+                  className={`h-8 w-24 items-center justify-center ${active ? "bg-brand-dark" : "bg-brand"}`}
+                  style={i > 0 && { borderLeftWidth: 1, borderColor: "#E8F5E9" }}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: active }}
                 >
-                  <Text className={`text-sm font-medium ${active ? "text-white" : "text-ink"}`}>
-                    {s.label}
-                  </Text>
+                  <Text className="text-sm font-medium text-white">{t.label}</Text>
                 </Pressable>
               );
             })}
           </ScrollView>
         </View>
 
-        {/* items */}
+        {/* items grid */}
         <FlatList
-          key={slot}
-          data={items}
-          keyExtractor={(i) => i.id}
-          numColumns={3}
-          contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 96 }}
+          key={tab}
+          data={cells}
+          keyExtractor={(item, i) => item?.id ?? `empty-${i}`}
+          numColumns={COLUMNS}
+          contentContainerStyle={{ paddingBottom: selected ? 88 : 16 }}
           renderItem={({ item }) => (
-            <ItemCard
+            <ItemCell
               item={item}
-              owned={owned.includes(item.id)}
-              equipped={equipped[item.slot] === item.id}
-              selected={item.id === selectedId}
+              owned={item && owned.includes(item.id)}
+              equipped={item && equipped[item.slot] === item.id}
+              selected={item?.id === selectedId}
               onPress={() => setSelectedId(item.id === selectedId ? null : item.id)}
             />
           )}
         />
 
-        {/* action */}
-        <View className="absolute bottom-6 left-5 right-5">
-          <Pressable
-            onPress={handleAction}
-            disabled={actionDisabled}
-            className={`h-12 items-center justify-center rounded-2xl ${actionDisabled ? "bg-sage" : "bg-brand"}`}
-            style={{ opacity: actionDisabled ? 0.7 : 1 }}
-          >
-            <Text className="font-semibold text-white">{actionLabel}</Text>
-          </Pressable>
-        </View>
+        {/* action (only while an item is selected) */}
+        {selected && (
+          <View className="absolute bottom-5 left-5 right-5">
+            <Pressable
+              onPress={handleAction}
+              disabled={actionDisabled}
+              className={`h-12 items-center justify-center rounded-2xl ${actionDisabled ? "bg-sage" : "bg-brand"}`}
+              style={{ opacity: actionDisabled ? 0.7 : 1 }}
+            >
+              <Text className="font-semibold text-white">{actionLabel}</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     </Screen>
   );

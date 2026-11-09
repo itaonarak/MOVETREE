@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import React, { useState } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
@@ -56,7 +56,11 @@ const friendList = () => {
   };
 
   // choose between "friend" and "pending"
-  const [filterType, setFilterType] = useState("friend");
+  // open on the request tab with router.push({ pathname: "/friendsList", params: { tab: "pending" } })
+  const { tab } = useLocalSearchParams();
+  const [filterType, setFilterType] = useState(
+    tab === "pending" ? "pending" : "friend",
+  );
 
   const displayedFriend = friendsData.filter((friendsData) => {
     if (filterType === "friend") return friendsData.isFriend;
