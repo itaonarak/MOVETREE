@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   Pressable,
+  Image,
 } from "react-native";
 import React from "react";
 import { router } from "expo-router";
@@ -75,10 +76,12 @@ const PostHistory = () => {
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Ionicons name="chevron-back" size={24} color="#E8F5E9" />
+          <Image
+            source={require("assets/icon/header/back_normal.svg")}
+            style={styles.headerIcon}
+          ></Image>
         </Pressable>
-
-        <Text style={styles.headerText}>Post History</Text>
+        <Text style={styles.headerText}>ประวัติโพสต์</Text>
       </View>
 
       <View className="flex-1 bg-sage-light">
@@ -97,18 +100,12 @@ const PostHistory = () => {
             renderItem={({ item }) => <PostCard post={item} />}
             ListHeaderComponent={
               <View className="items-center pb-1">
-                <Ionicons
-                  name="caret-down"
-                  size={14}
-                  color="#8A9E7A"
-                />
+                <Ionicons name="caret-down" size={14} color="#8A9E7A" />
               </View>
             }
             ListEmptyComponent={
               <View className="items-center py-10">
-                <Text className="text-ink-soft">
-                  No posts yet
-                </Text>
+                <Text className="text-ink-soft">No posts yet</Text>
               </View>
             }
             refreshing={refreshing}
@@ -136,5 +133,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: "50%",
     transform: "translateX(50%)",
+  },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
   },
 });

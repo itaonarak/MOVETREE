@@ -1,0 +1,133 @@
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import React, { useState } from "react";
+import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Screen } from "@/components/Screen";
+import { TextField } from "@/components/TextField";
+
+const changeEmail = () => {
+  const insets = useSafeAreaInsets();
+  function goBack() {
+    if (router.canGoBack()) router.back();
+    else router.replace("/personalInfo");
+  }
+  const [identifier1, setIdentifier1] = useState("");
+  const [identifier2, setIdentifier2] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <Screen>
+      {/* header */}
+      <View
+        className="h-14 flex-row items-center px-5"
+        style={{ justifyContent: "space-between" }}
+      >
+        <Pressable onPress={goBack} hitSlop={10}>
+          <Image
+            source={require("assets/icon/header/back_normal.svg")}
+            style={styles.headerIcon}
+          ></Image>
+        </Pressable>
+        <Text style={styles.headerText}>อีเมล</Text>
+      </View>
+      {/* end of header */}
+
+      <View className="flex-1 bg-sage-light">
+        <View style={styles.changeArea}>
+          {/* ยืมของเนเน่มา */}
+          <TextField
+            icon={require("assets/icon/accountManagement/profile1_normal.svg")}
+            placeholder="อีเมลของคุณ"
+            value={identifier1}
+            onChangeText={(value) => {
+              setIdentifier1(value);
+              setErrors((prev) => ({ ...prev, identifier: "" }));
+              setLoginError("");
+            }}
+            error={errors.identifier}
+          ></TextField>
+          {/* ยืมของเนเน่มา */}
+          <TextField
+            icon={require("assets/icon/accountManagement/profile2_active.svg")}
+            placeholder="เปลี่ยนอีเมล"
+            value={identifier2}
+            onChangeText={(value) => {
+              setIdentifier2(value);
+              setErrors((prev) => ({ ...prev, identifier: "" }));
+              setLoginError("");
+            }}
+            error={errors.identifier}
+          ></TextField>
+        </View>
+        <Pressable>
+          <View style={styles.confirmButton}>
+            <Text style={styles.confirmButtonText}>ยืนยันบัญชี</Text>
+          </View>
+        </Pressable>
+      </View>
+    </Screen>
+  );
+};
+
+export default changeEmail;
+
+const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  headerText: {
+    fontSize: 24,
+    lineHeight: 36,
+    fontFamily: "BaiJamjuree_600SemiBold",
+    color: "rgb(232, 245, 233)",
+    position: "absolute",
+    right: "50%",
+    transform: "translateX(50%)",
+  },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+    alignSelf: "center",
+  },
+  moreIcon: {
+    alignSelf: "center",
+    marginRight: "5%",
+  },
+  changeArea: {
+    marginTop: "20%",
+    justifyContent: "space-around",
+    width: 250,
+    alignSelf: "center",
+  },
+  confirmButton: {
+    width: 100,
+    height: 40,
+    backgroundColor: "#8FA07D",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "30%",
+    borderRadius: 10,
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: "BaiJamjuree_600SemiBold",
+    color: "#E8F5E9",
+  },
+});
