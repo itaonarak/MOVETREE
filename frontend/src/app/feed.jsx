@@ -1,6 +1,12 @@
-
 import { useEffect, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,6 +15,11 @@ import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { apiRequest } from "@/services/api";
+import { IconComponent } from "@/components/IconComponent";
+
+const ICONS = {
+  map: require("assets/icon/feed/map1_normal.svg"),
+};
 
 export default function FeedScreen() {
   const insets = useSafeAreaInsets();
@@ -70,21 +81,17 @@ export default function FeedScreen() {
   return (
     <Screen padBottom={false}>
       <View className="h-14 flex-row items-center justify-between px-5">
-        <Pressable hitSlop={10}>
-          <Ionicons name="location-outline" size={24} color="#E8F5E9" />
+        <Pressable onPress={() => router.push("/map")} hitSlop={10}>
+          <IconComponent
+            source={ICONS.map}
+            style={styles.headerIcon}
+          ></IconComponent>
         </Pressable>
 
         <Logo height={30} />
 
-        <Pressable
-          onPress={() => router.push("/notifications")}
-          hitSlop={10}
-        >
-          <Ionicons
-            name="notifications-outline"
-            size={24}
-            color="#E8F5E9"
-          />
+        <Pressable onPress={() => router.push("/notifications")} hitSlop={10}>
+          <Ionicons name="notifications-outline" size={24} color="#E8F5E9" />
         </Pressable>
       </View>
 
@@ -104,18 +111,12 @@ export default function FeedScreen() {
             renderItem={({ item }) => <PostCard post={item} />}
             ListHeaderComponent={
               <View className="items-center pb-1">
-                <Ionicons
-                  name="caret-down"
-                  size={14}
-                  color="#8A9E7A"
-                />
+                <Ionicons name="caret-down" size={14} color="#8A9E7A" />
               </View>
             }
             ListEmptyComponent={
               <View className="items-center py-10">
-                <Text className="text-ink-soft">
-                  No posts yet
-                </Text>
+                <Text className="text-ink-soft">No posts yet</Text>
               </View>
             }
             refreshing={refreshing}
@@ -133,3 +134,11 @@ export default function FeedScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+});

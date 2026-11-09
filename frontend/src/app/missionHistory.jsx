@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { MissionStatus } from "@/components/MissionStatus";
+import { IconComponent } from "@/components/IconComponent";
 
 const missionHistory = () => {
   const insets = useSafeAreaInsets();
@@ -24,14 +25,14 @@ const missionHistory = () => {
     <Screen>
       {/* header */}
       <View
-        className="h-14 flex-row items-center px-5"
+        className="h-14 flex-row items-center"
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Image
+          <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></Image>
+          ></IconComponent>
         </Pressable>
         <Text style={styles.headerText}>ประวัติภารกิจ</Text>
       </View>
@@ -72,12 +73,13 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
     position: "absolute",
-    right: "50%",
-    transform: "translateX(50%)",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
   },
   headerIcon: {
     tintColor: "#E8F5E9",
     width: 24,
     height: 24,
+    marginLeft: 20,
   },
 });

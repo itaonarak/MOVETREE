@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { AccountPopup } from "@/components/AccountPopup";
 import { VerificationPopup } from "@/components/VerificationPopup";
+import { IconComponent } from "@/components/IconComponent";
 
 const personalInfo = () => {
   const insets = useSafeAreaInsets();
@@ -38,14 +39,14 @@ const personalInfo = () => {
     <Screen>
       {/* header */}
       <View
-        className="h-14 flex-row items-center px-5"
+        className="h-14 flex-row items-center"
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Image
+          <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></Image>
+          ></IconComponent>
         </Pressable>
         <Text style={styles.headerText}>จัดการบัญชี</Text>
       </View>
@@ -61,10 +62,10 @@ const personalInfo = () => {
           </View>
           <View style={styles.profileNameArea}>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
-            <Image
+            <IconComponent
               source={require("assets/icon/personalInfo/rename1_normal.svg")}
               style={styles.bodyIcon}
-            ></Image>
+            ></IconComponent>
           </View>
         </View>
         {/* end of an area for the avatar */}
@@ -79,16 +80,16 @@ const personalInfo = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/personalInfo/userEmail_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>อีเมล</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -100,16 +101,16 @@ const personalInfo = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/personalInfo/keyEdit_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -121,16 +122,16 @@ const personalInfo = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/personalInfo/signOut_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -142,16 +143,16 @@ const personalInfo = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/personalInfo/deleteAccount_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
         </View>
@@ -185,8 +186,8 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
     position: "absolute",
-    right: "50%",
-    transform: "translateX(50%)",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
   },
   avatarPreviewZone: {
     width: "100%",
@@ -206,6 +207,7 @@ const styles = StyleSheet.create({
     tintColor: "#E8F5E9",
     width: 24,
     height: 24,
+    marginLeft: 20,
   },
   bodyIcon: {
     tintColor: "#1F2A1F",
@@ -238,8 +240,8 @@ const styles = StyleSheet.create({
 
   profileBackground: {
     backgroundColor: "rgb(232, 245, 233)",
-    width: "150px",
-    height: "150px",
+    width: 150,
+    height: 150,
     overflow: "hidden",
     alignItems: "center",
   },
@@ -247,7 +249,7 @@ const styles = StyleSheet.create({
   profileNameArea: {
     marginHorizontal: "auto",
     flexDirection: "row",
-    gap: "5px",
+    gap: 5,
     marginTop: "2.5%",
     marginBottom: "20%",
   },

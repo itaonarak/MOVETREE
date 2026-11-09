@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View, Image, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+import { IconComponent } from "./IconComponent";
 
 export function Friend({
   id,
@@ -13,23 +14,25 @@ export function Friend({
 }) {
   return (
     <View style={styles.friendsList}>
-      <Image
+      <IconComponent
         source={require("assets/icon/missionHistory/flower2_normal.svg")}
         style={{
-          marginLeft: "1rem",
+          width: 24,
+          height: 24,
+          marginLeft: 20,
           tintColor: "#5F6B5F",
         }}
-      ></Image>
+      ></IconComponent>
 
       <Text style={[styles.friendsListText, styles.text]}>{name}</Text>
 
       {/* Show unfriend button only if they are currently a friend */}
       {isFriend && !isPending && (
         <Pressable onPress={() => onUnfriend(id)} style={styles.unfriendButton}>
-          <Image
+          <IconComponent
             source={require("assets/icon/friendsList/X_normal.svg")}
             style={[styles.bodyIcon]}
-          ></Image>
+          ></IconComponent>
         </Pressable>
       )}
 
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     flexDirection: "row",
-    gap: "0.5rem",
+    gap: 5,
     borderStyle: "solid",
     borderColor: "#d9d9d9",
     borderWidth: 1,
@@ -83,13 +86,13 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     position: "absolute",
-    right: "1rem",
+    right: 20,
     backgroundColor: "#e8f5e9",
   },
   decisionBox: {
     width: 80,
     height: 20,
-    right: "1rem",
+    right: 20,
     flexDirection: "row",
     justifyContent: "space-around",
     alignContent: "center",

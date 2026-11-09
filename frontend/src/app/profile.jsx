@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { BottomNav } from "@/components/BottomNav";
+import { IconComponent } from "@/components/IconComponent";
 
 const profile = () => {
   const insets = useSafeAreaInsets();
@@ -47,22 +48,21 @@ const profile = () => {
         className="h-14 flex-row items-center px-5"
         style={{ justifyContent: "space-between" }}
       >
-        <Image
+        <IconComponent
           source={require("assets/icon/header/forest_normal.svg")}
           style={styles.headerIcon}
-        ></Image>
+        ></IconComponent>
         <Text style={styles.headerText}>โปรไฟล์</Text>
-        {/* FRIEND BUTTON IS NOT READY YET THIS IS JUST A PLACEHOLDER */}
         <Pressable
           onPress={() => {
             handleProfilePages("friendsList");
           }}
           hitSlop={10}
         >
-          <Image
+          <IconComponent
             source={require("assets/icon/header/friends1_normal.svg")}
             style={styles.headerIcon}
-          ></Image>
+          ></IconComponent>
         </Pressable>
       </View>
       {/* end of header */}
@@ -72,15 +72,17 @@ const profile = () => {
         <View style={styles.avatarPreviewZone}>
           <View style={styles.avatarPreview}>
             <Image source={require("assets/profile/demo.png")}></Image>
-            <Image
+            <IconComponent
               source={require("assets/icon/profile/dress1_normal.svg")}
               style={[styles.dressIcon, styles.bodyIcon]}
-            ></Image>
+            ></IconComponent>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
+
             <View style={styles.currentCoin}>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/coin_normal.svg")}
-              ></Image>
+                style={{ width: 24, height: 24 }}
+              ></IconComponent>
               <Text style={styles.currentCoinText}>999</Text>
             </View>
           </View>
@@ -97,16 +99,16 @@ const profile = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/profile/information_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ข้อมูลส่วนตัว</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -118,16 +120,16 @@ const profile = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/profile/postHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ประวัติโพสต์</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -139,16 +141,16 @@ const profile = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/profile/checkinHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ประวัติเช็กอิน</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
 
@@ -160,16 +162,16 @@ const profile = () => {
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
-                <Image
+                <IconComponent
                   source={require("assets/icon/profile/missionHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></Image>
+                ></IconComponent>
                 <Text style={styles.profileTabsText}>ประวัติภารกิจ</Text>
               </View>
-              <Image
+              <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></Image>
+              ></IconComponent>
             </View>
           </Pressable>
         </View>
@@ -228,9 +230,9 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
   },
   currentCoin: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
   },
   currentCoinText: {
     fontSize: 14,

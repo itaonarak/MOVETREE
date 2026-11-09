@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
+import { IconComponent } from "@/components/IconComponent";
 
 export function MissionStatus({
   taskID,
@@ -24,20 +25,22 @@ export function MissionStatus({
 
   return (
     <View style={styles.missionHistoryTabs}>
-      <Image
+      <IconComponent
         source={require("assets/icon/missionHistory/flower2_normal.svg")}
         style={{
+          width: 24,
+          height: 24,
           marginLeft: "10%",
           tintColor: "#5F6B5F",
         }}
-      ></Image>
+      ></IconComponent>
       <Text style={[styles.missionHistoryTabsText, styles.text]}>{task}</Text>
       <View style={styles.missionReward}>
-        <Image
+        <IconComponent
           source={require("assets/icon/missionHistory/coin_normal.svg")}
-          style={{ height: "15px", width: "15px" }}
-        ></Image>
-        <Text style={[styles.text, { fontSize: "10px" }]}>{coin}</Text>
+          style={{ height: 15, width: 15 }}
+        ></IconComponent>
+        <Text style={[styles.text, { fontSize: 10 }]}>{coin}</Text>
       </View>
       <View style={{ position: "absolute", right: "20%" }}>
         <Text style={[styles.missionCount, styles.text]}>
@@ -45,10 +48,10 @@ export function MissionStatus({
         </Text>
       </View>
       <View style={styles.missionTick}>
-        <Image
+        <IconComponent
           source={require("assets/icon/missionHistory/tick_normal.svg")}
-          style={{ opacity: done === max ? 1 : 0 }}
-        ></Image>
+          style={{ opacity: done === max ? 1 : 0, width: 24, height: 24 }}
+        ></IconComponent>
       </View>
     </View>
   );
