@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { router } from "expo-router";
-import { TextField } from "./TextField";
+import { POPUP_SIZE } from "./popupSize";
 
 export function VerificationPopup({ action }) {
   const [identifier, setIdentifier] = useState("");
@@ -22,19 +23,28 @@ export function VerificationPopup({ action }) {
             ยืนยันตัวก่อนเปลี่ยนรหัส
           </Text>
         )}
-        <View style={{ marginHorizontal: "10%" }}>
-          {/* ยืมมาจาก หน้า login ของเนเน่ */}
-          <TextField
-            icon={require("assets/icon/popup/key1_normal.svg")}
+        {/* compact password field (TextField is too tall for the popup size) */}
+        <View style={[styles.input, errors.identifier && styles.inputError]}>
+          <Image
+            source={require("assets/icon/popup/key1_normal.svg")}
+            style={{ width: 18, height: 18 }}
+            contentFit="contain"
+          />
+          <TextInput
+            style={styles.inputText}
             placeholder="ป้อนรหัสผ่าน"
+            placeholderTextColor="#6B7A68"
+            secureTextEntry
+            autoCapitalize="none"
             value={identifier}
             onChangeText={(value) => {
               setIdentifier(value);
               setErrors((prev) => ({ ...prev, identifier: "" }));
               setLoginError("");
             }}
-            error={errors.identifier}
-          ></TextField>
+          />
+        </View>
+        <View style={styles.row}>
           <Pressable
             onPress={() => {
               router.push("assistance");
@@ -42,8 +52,6 @@ export function VerificationPopup({ action }) {
           >
             <Text style={[styles.text, styles.extraText]}>ลืมรหัสผ่าน</Text>
           </Pressable>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           <Pressable
             onPress={() => {
               if (action === "changeEmail") router.push("/changeEmail");
@@ -66,6 +74,8 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
   },
   mainBox: {
     backgroundColor: "#3E513B",
@@ -75,28 +85,24 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    width: "90%",
-    height: 250,
-    alignSelf: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
+    ...POPUP_SIZE,
+    paddingHorizontal: 20,
+    justifyContent: "center",
   },
   text: {
     fontFamily: "BaiJamjuree_600SemiBold",
     alignSelf: "center",
   },
   mainText: {
-    fontSize: 24,
-    lineHeight: 36,
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 8,
     color: "#E8F5E9",
   },
   smallBox: {
     backgroundColor: "#E8F5E9",
-    width: 100,
-    height: 40,
+    height: 32,
+    paddingHorizontal: 14,
     borderRadius: 10,
     elevation: 3,
     shadowColor: "#000",
@@ -110,10 +116,35 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: "#3E513B",
   },
+  input: {
+    height: 36,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#E8F5E9",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+  },
+  inputError: {
+    borderWidth: 2,
+    borderColor: "#F87171",
+  },
+  inputText: {
+    flex: 1,
+    marginLeft: 6,
+    padding: 0,
+    fontFamily: "BaiJamjuree_400Regular",
+    fontSize: 13,
+    color: "#1C1B1F",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   extraText: {
     fontSize: 14,
     lineHeight: 24,
     color: "#E8F5E9",
-    alignSelf: "flex-end",
   },
 });

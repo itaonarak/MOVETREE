@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { router } from "expo-router";
+import { POPUP_SIZE } from "./popupSize";
 
 export function AccountPopup({ action }) {
   return (
@@ -47,6 +48,8 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
   },
   mainBox: {
     backgroundColor: "#3E513B",
@@ -56,28 +59,24 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    width: "90%",
-    height: 200,
-    alignSelf: "center",
-    flexDirection: "column",
-    justifyContent: "space-around",
+    ...POPUP_SIZE,
+    paddingHorizontal: 20,
+    justifyContent: "center",
   },
   text: {
     fontFamily: "BaiJamjuree_600SemiBold",
     alignSelf: "center",
   },
   mainText: {
-    fontSize: 24,
-    lineHeight: 36,
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 12,
     color: "#E8F5E9",
   },
   smallBox: {
     backgroundColor: "#E8F5E9",
-    width: 100,
-    height: 40,
+    height: 32,
+    paddingHorizontal: 14,
     borderRadius: 10,
     elevation: 3,
     shadowColor: "#000",

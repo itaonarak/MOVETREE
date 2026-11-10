@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { captureRef } from "react-native-view-shot";
 import { Screen } from "@/components/Screen";
+import { POPUP_SIZE } from "@/components/popupSize";
 import { Avatar } from "@/components/Avatar";
 import { apiRequest } from "@/services/api";
 import { clearDraftPost, getDraftPost } from "@/services/draftPost";
@@ -76,8 +77,6 @@ function PillButton({ label, onPress, disabled, size = "lg" }) {
   );
 }
 
-// Card that pops up over the bottom of the photo
-const POPUP = { width: 256, height: 132 };
 
 // placement: "screen" = centered on the screen, "photo" = over the bottom of the photo
 function Popup({ title, children, placement = "screen" }) {
@@ -89,7 +88,7 @@ function Popup({ title, children, placement = "screen" }) {
     >
       <View
         className="items-center justify-center rounded-2xl bg-paper px-5"
-        style={[shadow, { width: POPUP.width, height: POPUP.height }]}
+        style={[shadow, POPUP_SIZE]}
       >
         <Text className="mb-4 text-center text-base font-semibold text-ink">{title}</Text>
         <View className="w-full">{children}</View>
