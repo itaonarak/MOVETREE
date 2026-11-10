@@ -11,9 +11,8 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
-import { PostCard } from "@/components/PostCard";
-import { BottomNav } from "@/components/BottomNav";
-import { Logo } from "@/components/Logo";
+import { AccountPopup } from "@/components/AccountPopup";
+import { VerificationPopup } from "@/components/VerificationPopup";
 
 const personalInfo = () => {
   const insets = useSafeAreaInsets();
@@ -43,11 +42,14 @@ const personalInfo = () => {
     <Screen>
       {/* header */}
       <View
-        className="h-14 flex-row items-center px-5"
+        className="h-14 flex-row items-center"
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Ionicons name="chevron-back" size={24} color="#E8F5E9" />
+          <Image
+            source={require("assets/icon/header/back_normal.svg")}
+            style={styles.headerIcon}
+          ></Image>
         </Pressable>
         <Text style={styles.headerText}>ข้อมูลส่วนตัว</Text>
       </View>
@@ -63,9 +65,9 @@ const personalInfo = () => {
           </View>
           <View style={styles.profileNameArea}>
             <Text style={styles.profileUsernameText}>วอดส์</Text>
-            <Image
+            <IconComponent
               source={require("assets/icon/personalInfo/rename1_normal.svg")}
-              style={{ alignSelf: "center" }}
+              style={styles.bodyIcon}
             ></Image>
           </View>
         </View>
@@ -73,61 +75,87 @@ const personalInfo = () => {
 
         {/* to other 4 pages */}
         <View>
-          {/* ข้อมูลส่วนตัว */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* อีเมล */}
+          <Pressable
+            onPress={() => {
+              handlePopup("changeEmail");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/userEmail_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>อีเมล</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/userEmail_normal.svg")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>อีเมล</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติโพสต์ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* รหัสผ่าน */}
+          <Pressable
+            onPress={() => {
+              handlePopup("changePassword");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/keyEdit_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/keyEdit_normal.svg")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>เปลี่ยนรหัสผ่าน</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติเช็กอิน */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* Sign Out */}
+          <Pressable
+            onPress={() => {
+              handlePopup("signOut");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/signOut_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/signOut_normal.svg")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>ออกจากระบบ</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color="rgb(31, 42, 31)"
-              style={{ alignSelf: "center", marginRight: "5%" }}
-            />
-          </View>
+          </Pressable>
 
-          {/* ประวัติภารกิจ */}
-          <View style={styles.profileTabs}>
-            <View style={styles.profileTabsInfo}>
+          {/* Delete Account */}
+          <Pressable
+            onPress={() => {
+              handlePopup("deleteAccount");
+            }}
+          >
+            <View style={styles.profileTabs}>
+              <View style={styles.profileTabsInfo}>
+                <Image
+                  source={require("assets/icon/personalInfo/deleteAccount_normal.svg")}
+                  style={styles.bodyIcon}
+                ></Image>
+                <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
+              </View>
               <Image
-                source={require("assets/icon/personalInfo/deleteAccount_normal.svg")}
+                source={require("assets/icon/profile/more_normal.svg")}
+                style={[styles.bodyIcon, styles.moreIcon]}
               ></Image>
-              <Text style={styles.profileTabsText}>ลบบัญชีผู้ใช้</Text>
             </View>
             <Ionicons
               name="chevron-forward"
@@ -156,8 +184,8 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
     position: "absolute",
-    right: "50%",
-    transform: "translateX(50%)",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
   },
   avatarPreviewZone: {
     width: "100%",
@@ -172,6 +200,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 30,
     fontFamily: "BaiJamjuree_600SemiBold",
+  },
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+  bodyIcon: {
+    tintColor: "#1F2A1F",
+    width: 24,
+    height: 24,
+    alignSelf: "center",
+  },
+  moreIcon: {
+    alignSelf: "center",
+    marginRight: "5%",
   },
   profileTabs: {
     height: 50,
@@ -194,8 +237,8 @@ const styles = StyleSheet.create({
 
   profileBackground: {
     backgroundColor: "rgb(232, 245, 233)",
-    width: "150px",
-    height: "150px",
+    width: 150,
+    height: 150,
     overflow: "hidden",
     alignItems: "center",
   },
@@ -203,7 +246,7 @@ const styles = StyleSheet.create({
   profileNameArea: {
     marginHorizontal: "auto",
     flexDirection: "row",
-    gap: "5px",
+    gap: 5,
     marginTop: "2.5%",
     marginBottom: "20%",
   },

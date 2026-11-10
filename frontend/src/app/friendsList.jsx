@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { Friend } from "@/components/Friend";
+import { IconComponent } from "@/components/IconComponent";
 
 const friendList = () => {
   const insets = useSafeAreaInsets();
@@ -87,14 +88,14 @@ const friendList = () => {
     <Screen>
       {/* header */}
       <View
-        className="h-14 flex-row items-center px-5"
+        className="h-14 flex-row items-center"
         style={{ justifyContent: "space-between" }}
       >
         <Pressable onPress={goBack} hitSlop={10}>
-          <Image
+          <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></Image>
+          ></IconComponent>
         </Pressable>
         <Text style={styles.headerText}>เพื่อน</Text>
       </View>
@@ -143,10 +144,10 @@ const friendList = () => {
       <View className="flex-1 bg-sage-light">
         <View style={styles.searchArea}>
           <View style={styles.searchButton}>
-            <Image
+            <IconComponent
               source={require("assets/icon/friendsList/search_normal.svg")}
               style={styles.bodyIcon}
-            ></Image>
+            ></IconComponent>
           </View>
           {/* Search Bar */}
           <TextInput
@@ -190,13 +191,14 @@ const styles = StyleSheet.create({
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
     position: "absolute",
-    right: "50%",
-    transform: "translateX(50%)",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
   },
   headerIcon: {
     tintColor: "#E8F5E9",
     width: 24,
     height: 24,
+    marginLeft: 20,
   },
   bodyIcon: {
     tintColor: "#1F2A1F",
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    height: "2.5rem",
+    height: "5%",
   },
   extendedHeaderTab: {
     width: "50%",

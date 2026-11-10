@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View, Image, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+import { IconComponent } from "./IconComponent";
 
 export function Friend({
   id,
@@ -13,19 +14,36 @@ export function Friend({
 }) {
   return (
     <View style={styles.friendsList}>
+<<<<<<< HEAD
       <Image
         source={require("assets/icon/missionHistory/flower.png")}
         style={{
           marginLeft: "1rem",
+=======
+      <IconComponent
+        source={require("assets/icon/missionHistory/flower2_normal.svg")}
+        style={{
+          width: 24,
+          height: 24,
+          marginLeft: 20,
+          tintColor: "#5F6B5F",
+>>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         }}
-      ></Image>
+      ></IconComponent>
 
       <Text style={[styles.friendsListText, styles.text]}>{name}</Text>
 
       {/* Show unfriend button only if they are currently a friend */}
       {isFriend && !isPending && (
         <Pressable onPress={() => onUnfriend(id)} style={styles.unfriendButton}>
+<<<<<<< HEAD
           <Ionicons name="close-outline" size={24} color="#1F2A1F" />
+=======
+          <IconComponent
+            source={require("assets/icon/friendsList/X_normal.svg")}
+            style={[styles.bodyIcon]}
+          ></IconComponent>
+>>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         </Pressable>
       )}
 
@@ -55,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     flexDirection: "row",
-    gap: "0.5rem",
+    gap: 5,
     borderStyle: "solid",
     borderColor: "#d9d9d9",
     borderWidth: 1,
@@ -69,13 +87,13 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     position: "absolute",
-    right: "1rem",
+    right: 20,
     backgroundColor: "#e8f5e9",
   },
   decisionBox: {
     width: 80,
     height: 20,
-    right: "1rem",
+    right: 20,
     flexDirection: "row",
     justifyContent: "space-around",
     alignContent: "center",

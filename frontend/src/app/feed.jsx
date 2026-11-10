@@ -1,6 +1,12 @@
-
 import { useEffect, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,6 +16,11 @@ import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { apiRequest } from "@/services/api";
+import { IconComponent } from "@/components/IconComponent";
+
+const ICONS = {
+  map: require("assets/icon/feed/map1_normal.svg"),
+};
 
 // assets/icon/feed file names don't match their drawings — mapped by content.
 const HEADER_ICONS = {
@@ -88,16 +99,25 @@ export default function FeedScreen() {
   return (
     <Screen padBottom={false}>
       <View className="h-14 flex-row items-center justify-between px-5">
+<<<<<<< HEAD
         <Pressable hitSlop={10} accessibilityLabel="location">
           <Image
             source={HEADER_ICONS.location}
             style={{ width: 24, height: 24 }}
             tintColor={HEADER_TINT}
           />
+=======
+        <Pressable onPress={() => router.push("/map")} hitSlop={10}>
+          <IconComponent
+            source={ICONS.map}
+            style={styles.headerIcon}
+          ></IconComponent>
+>>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         </Pressable>
 
         <Logo height={30} />
 
+<<<<<<< HEAD
         <Pressable
           onPress={() => router.push("/notifications")}
           hitSlop={10}
@@ -108,6 +128,10 @@ export default function FeedScreen() {
             style={{ width: 24, height: 24 }}
             tintColor={HEADER_TINT}
           />
+=======
+        <Pressable onPress={() => router.push("/notifications")} hitSlop={10}>
+          <Ionicons name="notifications-outline" size={24} color="#E8F5E9" />
+>>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         </Pressable>
       </View>
 
@@ -127,18 +151,12 @@ export default function FeedScreen() {
             renderItem={({ item }) => <PostCard post={item} />}
             ListHeaderComponent={
               <View className="items-center pb-1">
-                <Ionicons
-                  name="caret-down"
-                  size={14}
-                  color="#8A9E7A"
-                />
+                <Ionicons name="caret-down" size={14} color="#8A9E7A" />
               </View>
             }
             ListEmptyComponent={
               <View className="items-center py-10">
-                <Text className="text-ink-soft">
-                  No posts yet
-                </Text>
+                <Text className="text-ink-soft">No posts yet</Text>
               </View>
             }
             refreshing={refreshing}
@@ -156,3 +174,11 @@ export default function FeedScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  headerIcon: {
+    tintColor: "#E8F5E9",
+    width: 24,
+    height: 24,
+  },
+});
