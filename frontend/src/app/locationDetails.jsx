@@ -1,85 +1,136 @@
+
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  ScrollView,
   Pressable,
   Image,
 } from "react-native";
-import React from "react";
-import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
 import { Screen } from "@/components/Screen";
 import { IconComponent } from "@/components/IconComponent";
-import { useLocalSearchParams } from "expo-router";
-import { Activities } from "@/components/Activities"; // Ensure you import your Activities component
+import { Activities } from "@/components/Activities";
 
 const LocationDetails = () => {
-  const insets = useSafeAreaInsets();
-  function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace("/profile");
-  }
   const params = useLocalSearchParams();
 
-  // Parse stringified arrays safely from route params
-  const activities = params.activities ? JSON.parse(params.activities) : [];
-  const activitiesImages = params.activitiesImages
-    ? JSON.parse(params.activitiesImages)
-    : [];
-  const activitiesDetails = params.activitiesDetails
-    ? JSON.parse(params.activitiesDetails)
-    : [];
-  const images = params.images ? JSON.parse(params.images) : [];
+  const title = params.title || "สถานที่";
+  const description = params.description || "";
+  const address = params.address || "";
+  const imageUrl = params.image_url || "";
+
+  const parseArray = (value) => {
+    try {
+      return value ? JSON.parse(value) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const activities = parseArray(params.activities);
+  const activitiesImages = parseArray(params.activitiesImages);
+  const activitiesDetails = parseArray(params.activitiesDetails);
+
+  function goBack() {
+    if (router.canGoBack()) router.back();
+    else router.replace("/map");
+  }
+
+  function goToCheckin() {
+    router.push({
+      pathname: "/checkin",
+      params: {
+        area_id: params.id,
+        title,
+        latitude: params.latitude,
+        longitude: params.longitude,
+        image_url: imageUrl,
+      },
+    });
+  }
 
   return (
     <Screen>
-      {/* header */}
-      <View
-        className="h-14 flex-row items-center"
-        style={{ justifyContent: "space-between" }}
-      >
+      {/* Header */}
+      <View style={styles.header}>
         <Pressable onPress={goBack} hitSlop={10}>
           <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></IconComponent>
-        </Pressable>
-        <Text style={styles.headerText}>แผนที่</Text>
-      </View>
-      {/* end of header */}
-
-      <View className="flex-1 bg-sage-light" style={{ gap: 20 }}>
-        <View style={styles.mapArea}>
-          <View style={styles.mapAreaDetails}>
-            <IconComponent
-              source={require("assets/icon/locationDetail/location_normal.svg")}
-              style={styles.icon}
-            ></IconComponent>
-            <Text style={styles.mapAreaText}>{params.title}</Text>
-          </View>
-          {/* ขอเปลี่ยนเป็นรูปแทนนะ ตอนแรกใส่ Map แล้วแอพมัน crash เลย TT */}
-          <Image
-            style={styles.areaPicture}
-            source={require("assets/profile/demo.png")}
-          ></Image>
-        </View>
-        <View style={styles.boxDetail}>
-          <View style={styles.boxTopic}>
-            <Text style={styles.boxTopicText}>กิจกรรม</Text>
-          </View>
-          <FlatList
-            data={activities}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <Activities
-                name={typeof item === "object" ? item.name : item}
-                details={activitiesDetails[index] || ""}
-                image={activitiesImages[index] || ""}
-              />
-            )}
           />
-        </View>
+        </Pressable>
+
+        <Text style={styles.headerText}>รายละเอียดสถานที่</Text>
+      </View>
+
+      <View style={styles.content}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Place information */}
+          <View style={styles.mapArea}>
+            <View style={styles.mapAreaDetails}>
+              <IconComponent
+                source={require("assets/icon/locationDetail/location_normal.svg")}
+                style={styles.icon}
+              />
+              <Text style={styles.mapAreaText}>{title}</Text>
+            </View>
+
+            <Image
+              style={styles.areaPicture}
+              source={
+                imageUrl
+                  ? { uri: imageUrl }
+                  : require("assets/profile/demo.png")
+              }
+              resizeMode="cover"
+            />
+          </View>
+
+          {/* Description */}
+          <View style={styles.boxDetail}>
+            <Text style={styles.sectionTitle}>รายละเอียดสถานที่</Text>
+
+            <Text style={styles.description}>
+              {description || "ยังไม่มีรายละเอียดสถานที่"}
+            </Text>
+
+            {!!address && (
+              <View style={styles.addressContainer}>
+                <Text style={styles.addressLabel}>ที่อยู่</Text>
+                <Text style={styles.description}>{address}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Activities */}
+          {activities.length > 0 && (
+            <View style={styles.boxDetail}>
+              <Text style={styles.sectionTitle}>กิจกรรม</Text>
+
+              {activities.map((item, index) => (
+                <Activities
+                  key={index}
+                  name={typeof item === "object" ? item.name : item}
+                  details={activitiesDetails[index] || ""}
+                  image={activitiesImages[index] || ""}
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Check-in button */}
+        <Pressable
+          style={styles.checkinButton}
+          onPress={goToCheckin}
+        >
+          <Text style={styles.checkinButtonText}>Check-in</Text>
+        </Pressable>
       </View>
     </Screen>
   );
@@ -89,8 +140,10 @@ export default LocationDetails;
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
-    justifyContent: "center",
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerText: {
     fontSize: 24,
@@ -107,15 +160,22 @@ const styles = StyleSheet.create({
     height: 24,
     marginLeft: 20,
   },
+  content: {
+    flex: 1,
+    backgroundColor: "#E8F5E9",
+  },
+  scrollContent: {
+    paddingTop: 24,
+    paddingBottom: 20,
+    gap: 24,
+  },
   mapArea: {
-    marginTop: "10%",
     width: 300,
-    height: 350,
-    gap: 5,
-    marginHorizontal: "auto",
-    overflow: "hidden",
+    gap: 8,
+    alignSelf: "center",
   },
   mapAreaText: {
+    flex: 1,
     fontSize: 20,
     lineHeight: 30,
     color: "#1F2A1F",
@@ -129,35 +189,50 @@ const styles = StyleSheet.create({
   mapAreaDetails: {
     flexDirection: "row",
     gap: 5,
-    justifyContent: "flex-start",
-  },
-  map: {
-    width: "100%",
-    height: "100%",
+    alignItems: "center",
   },
   areaPicture: {
-    width: 300,
-    height: 300,
+    width: "100%",
+    height: 250,
     borderRadius: 20,
-    overflow: "hidden",
     backgroundColor: "white",
   },
   boxDetail: {
     width: 300,
-    marginHorizontal: "auto",
-    flex: 1,
+    alignSelf: "center",
+    gap: 10,
   },
-  boxTopic: {
-    height: 30,
-    width: 100,
+  sectionTitle: {
+    fontSize: 18,
+    color: "#1F2A1F",
+    fontFamily: "BaiJamjuree_600SemiBold",
+  },
+  description: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: "#1F2A1F",
+    fontFamily: "BaiJamjuree_400Regular",
+  },
+  addressContainer: {
+    gap: 4,
+  },
+  addressLabel: {
+    fontSize: 15,
+    color: "#3E513B",
+    fontFamily: "BaiJamjuree_600SemiBold",
+  },
+  checkinButton: {
+    marginHorizontal: 24,
+    marginTop: 8,
+    marginBottom: 16,
+    height: 50,
     backgroundColor: "#3E513B",
-    borderRadius: 10,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
-  boxTopicText: {
-    fontSize: 16,
-    lineHeight: 24,
+  checkinButtonText: {
+    fontSize: 18,
     color: "#E8F5E9",
     fontFamily: "BaiJamjuree_600SemiBold",
   },

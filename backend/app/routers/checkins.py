@@ -1,11 +1,9 @@
 
 from uuid import UUID
-from typing import Literal
 
 from pydantic import BaseModel, Field, HttpUrl
 from fastapi import APIRouter, HTTPException, Depends
 
-from app.database import supabase
 from app.dependencies import get_current_user
 
 
@@ -20,7 +18,6 @@ class CheckinCreate(BaseModel):
     latitude: float = Field(ge=-90, le=90)
     longitude: float = Field(ge=-180, le=180)
     photo_url: HttpUrl
-    status: Literal["success", "failed"]
 
 
 @router.post("/")
@@ -29,39 +26,20 @@ def create_checkin(
     current_user: dict = Depends(get_current_user)
 ):
     client = current_user["client"]
-    user_id = current_user["user_id"]
 
     try:
-        place_response = (
-            client.table("green_areas")
-            .select("area_id")
-            .eq("area_id", str(checkin.area_id))
-            .execute()
-        )
+        response = client.rpc(
+            "create_checkin_with_missions",
+            {
+                "p_area_id": str(checkin.area_id),
+                "p_latitude": checkin.latitude,
+                "p_longitude": checkin.longitude,
+                "p_photo_url": str(checkin.photo_url)
+            }
+        ).execute()
 
-        if not place_response.data:
-            raise HTTPException(
-                status_code=404,
-                detail="Place not found"
-            )
+        return response.data
 
-        response = (
-            client.table("check_ins")
-            .insert({
-                "user_id": user_id,
-                "area_id": str(checkin.area_id),
-                "latitude": checkin.latitude,
-                "longitude": checkin.longitude,
-                "photo_url": str(checkin.photo_url),
-                "status": checkin.status
-            })
-            .execute()
-        )
-
-        return response.data[0]
-
-    except HTTPException:
-        raise
     except Exception as e:
         print("CHECK-IN ERROR:", repr(e))
         raise HTTPException(
