@@ -4,7 +4,12 @@ import urllib.error
 import urllib.request
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+    model_validator,
+)
 
 from app.database import SUPABASE_URL, SUPABASE_KEY, supabase_admin
 from app.dependencies import get_current_user
@@ -33,6 +38,10 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     password: str
+
+
+class ChangeUsernameRequest(BaseModel):
+    new_username: str = Field(min_length=3, max_length=50)
 
 
 class ChangeEmailRequest(BaseModel):
@@ -178,6 +187,119 @@ def get_my_profile(current_user: dict = Depends(get_current_user)):
 
 
 # =========================
+# Change Username
+# =========================
+
+@router.patch("/me/username")
+def change_username(
+    request: ChangeUsernameRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    user_id = current_user["user_id"]
+    client = current_user["client"]
+
+    new_username = request.new_username.strip()
+    current_profile = (
+    client.table("users")
+    .select("username")
+    .eq("user_id", user_id)
+    .maybe_single()
+    .execute()
+)
+
+    if not current_profile.data:
+        raise HTTPException(
+            status_code=404,
+            detail="User profile not found"
+        )
+
+    if current_profile.data["username"] == new_username:
+        raise HTTPException(
+            status_code=400,
+            detail="New username is the same as current username"
+        )
+
+    if len(new_username) < 3 or len(new_username) > 50:
+        raise HTTPException(
+            status_code=400,
+            detail="Username must be between 3 and 50 characters"
+        )
+
+    try:
+        # Check whether the username is already used by another account.
+        existing = (
+            client.table("users")
+            .select("user_id, username")
+            .eq("username", new_username)
+            .neq("user_id", str(user_id))
+            .execute()
+        )
+
+        if existing.data:
+            raise HTTPException(
+                status_code=409,
+                detail="Username already exists"
+            )
+        # Update username in the application users table.
+        updated = (
+            client.table("users")
+            .update({"username": new_username})
+            .eq("user_id", user_id)
+            .execute()
+        )
+
+        if not updated.data:
+            raise HTTPException(
+                status_code=404,
+                detail="User profile not found"
+            )
+
+        # Update Supabase Auth user metadata.
+        # This does not change the user's email or password.
+        try:
+            update_auth_user(
+                current_user,
+                {
+                    "data": {
+                        "username": new_username
+                    }
+                }
+            )
+
+        except HTTPException as error:
+            # Roll back the application profile if Auth metadata fails.
+            try:
+                (
+                    client.table("users")
+                    .update({
+                        "username": current_user.get("username")
+                    })
+                    .eq("user_id", user_id)
+                    .execute()
+                )
+            except Exception as rollback_error:
+                print("Username rollback error:", rollback_error)
+
+            raise error
+
+        return {
+            "message": "Username updated successfully",
+            "username": new_username
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print("Change username error:", e)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update username"
+        )
+
+
+# =========================
 # Verify Current Password
 # =========================
 
@@ -288,7 +410,6 @@ def delete_my_account(
         ).execute()
 
         # Delete Supabase Auth user.
-        # Related users table data is removed through its FK cascade.
         supabase_admin.auth.admin.delete_user(user_id)
 
         return {

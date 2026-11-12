@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Avatar } from "@/components/Avatar";
 import { useOutfit } from "@/services/outfit";
 import { Screen } from "@/components/Screen";
@@ -25,20 +25,36 @@ const PersonalInfo = () => {
   const [profileLoading, setProfileLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const data = await apiRequest("/users/me");
-        setProfile(data);
-      } catch (error) {
-        console.error("Failed to load profile:", error);
-      } finally {
-        setProfileLoading(false);
-      }
-    }
+  // Reload profile whenever this screen becomes active.
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-    fetchProfile();
-  }, []);
+      async function fetchProfile() {
+        try {
+          setProfileLoading(true);
+
+          const data = await apiRequest("/users/me");
+
+          if (isActive) {
+            setProfile(data);
+          }
+        } catch (error) {
+          console.error("Failed to load profile:", error);
+        } finally {
+          if (isActive) {
+            setProfileLoading(false);
+          }
+        }
+      }
+
+      fetchProfile();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   function goBack() {
     if (router.canGoBack()) {
@@ -69,20 +85,16 @@ const PersonalInfo = () => {
     }
   }
 
-  
-
   async function handleDeleteAccount() {
     if (deleting) return;
 
     try {
       setDeleting(true);
 
-      // Delete account and related application data on backend.
       await apiRequest("/users/me", {
         method: "DELETE",
       });
 
-      // Remove the saved access token after successful deletion.
       await removeToken();
 
       setPopupType("deleteAccountSuccess");
@@ -110,9 +122,8 @@ const PersonalInfo = () => {
       closePopup();
       router.push("/changePassword");
     } else if (type === "signOut") {
-       handleSignOut();
-      }
-     else if (type === "deleteAccount") {
+      handleSignOut();
+    } else if (type === "deleteAccount") {
       handleDeleteAccount();
     }
   }
@@ -262,7 +273,10 @@ const PersonalInfo = () => {
       {/* Email / Password verification */}
       {popupType === "changeEmail" ||
       popupType === "changePassword" ? (
-        <VerificationPopup action={popupType} />
+        <VerificationPopup
+          action={popupType}
+          onClose={closePopup}
+        />
       ) : null}
 
       {/* Sign out confirmation */}
@@ -327,7 +341,10 @@ const PersonalInfo = () => {
 
       {/* Rename verification */}
       {popupType === "rename" ? (
-        <VerificationPopup action="rename" />
+        <VerificationPopup
+          action="rename"
+          onClose={closePopup}
+        />
       ) : null}
 
       {/* Sign out success */}

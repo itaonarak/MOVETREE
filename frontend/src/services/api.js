@@ -18,7 +18,16 @@ export async function apiRequest(endpoint, options = {}) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.detail || "Something went wrong");
+    const error = new Error(
+      typeof data.detail === "string"
+        ? data.detail
+        : "Something went wrong"
+    );
+
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
   }
 
   return data;

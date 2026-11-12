@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Pressable,
   TextInput,
-  Alert,
 } from "react-native";
 import { Image } from "expo-image";
 import React, { useState } from "react";
@@ -13,7 +12,7 @@ import { router } from "expo-router";
 import { POPUP_SIZE } from "./popupSize";
 import { apiRequest } from "@/services/api";
 
-export function VerificationPopup({ action }) {
+export function VerificationPopup({ action, onClose }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,20 +33,22 @@ export function VerificationPopup({ action }) {
       });
 
       if (action === "changeEmail") {
+        onClose?.();
         router.push("/changeEmail");
       } else if (action === "changePassword") {
+        onClose?.();
         router.push("/changePassword");
-      } else {
-        Alert.alert(
-          "ยังไม่พร้อมใช้งาน",
-          "ฟังก์ชันนี้ยังไม่ได้เชื่อมต่อ"
-        );
+      } else if (action === "rename") {
+        onClose?.();
+        router.push("/changeUsername");
       }
     } catch (err) {
+      const message = String(err.message || "");
+
       setError(
-        err.message === "Incorrect password"
+        message.includes("Incorrect password")
           ? "รหัสผ่านไม่ถูกต้อง"
-          : err.message || "ไม่สามารถตรวจสอบรหัสผ่านได้"
+          : message || "ไม่สามารถตรวจสอบรหัสผ่านได้"
       );
     } finally {
       setLoading(false);
@@ -71,7 +72,7 @@ export function VerificationPopup({ action }) {
 
         {action === "rename" && (
           <Text style={[styles.text, styles.mainText]}>
-            เปลี่ยนชื่อผู้ใช้
+            ยืนยันตัวก่อนเปลี่ยนชื่อผู้ใช้
           </Text>
         )}
 
