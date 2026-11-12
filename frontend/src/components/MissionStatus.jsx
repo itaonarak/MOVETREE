@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { IconComponent } from "@/components/IconComponent";
 
 export function MissionStatus({
@@ -11,13 +12,9 @@ export function MissionStatus({
 }) {
   const id = taskID;
   const max = maxAttempts;
-  let done = completedAttempts;
+  const done = completedAttempts;
   const task = taskDetail;
   const coin = reward;
-
-  function didTask() {
-    done++;
-  }
 
   function getID() {
     return id;
@@ -25,52 +22,45 @@ export function MissionStatus({
 
   return (
     <View style={styles.missionHistoryTabs}>
-<<<<<<< HEAD
-      <Image
-        source={require("assets/icon/missionHistory/flower.png")}
-=======
+      {/* Mission icon */}
       <IconComponent
         source={require("assets/icon/missionHistory/flower2_normal.svg")}
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
-        style={{
-          width: 24,
-          height: 24,
-          marginLeft: "10%",
-        }}
-      ></IconComponent>
-      <Text style={[styles.missionHistoryTabsText, styles.text]}>{task}</Text>
+        style={styles.flowerIcon}
+      />
+
+      {/* Mission name */}
+      <Text style={[styles.missionHistoryTabsText, styles.text]}>
+        {task}
+      </Text>
+
+      {/* Reward */}
       <View style={styles.missionReward}>
-<<<<<<< HEAD
-        <Image
-          source={require("assets/icon/profile/coin_normal.svg")}
-          style={{ height: "15px", width: "15px" }}
-        ></Image>
-        <Text style={[styles.text, { fontSize: "10px" }]}>{coin}</Text>
-=======
         <IconComponent
           source={require("assets/icon/missionHistory/coin_normal.svg")}
-          style={{ height: 15, width: 15 }}
-        ></IconComponent>
-        <Text style={[styles.text, { fontSize: 10 }]}>{coin}</Text>
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
+          style={styles.coinIcon}
+        />
+
+        <Text style={[styles.text, styles.rewardText]}>
+          {coin}
+        </Text>
       </View>
-      <View style={{ position: "absolute", right: "20%" }}>
+
+      {/* Completed attempts */}
+      <View style={styles.missionCountContainer}>
         <Text style={[styles.missionCount, styles.text]}>
           {done}/{max}
         </Text>
       </View>
+
+      {/* Completion tick */}
       <View style={styles.missionTick}>
-<<<<<<< HEAD
-        <Image
-          source={require("assets/icon/missionHistory/tick.png")}
-          style={{ opacity: done === max ? 1 : 0 }}
-        ></Image>
-=======
         <IconComponent
           source={require("assets/icon/missionHistory/tick_normal.svg")}
-          style={{ opacity: done === max ? 1 : 0, width: 24, height: 24 }}
-        ></IconComponent>
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
+          style={[
+            styles.tickIcon,
+            { opacity: done === max ? 1 : 0 },
+          ]}
+        />
       </View>
     </View>
   );
@@ -80,38 +70,68 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "BaiJamjuree_400Regular",
   },
+
   missionHistoryTabs: {
     backgroundColor: "#e8f5e9",
     height: 50,
     width: "100%",
     alignItems: "center",
-    justifyContent: "left",
+    justifyContent: "flex-start",
     flexDirection: "row",
-    gap: "0.5rem",
+    gap: 8,
     borderStyle: "solid",
     borderColor: "#d9d9d9",
     borderWidth: 1,
   },
+
+  flowerIcon: {
+    width: 24,
+    height: 24,
+    marginLeft: "10%",
+  },
+
   missionHistoryTabsText: {
     fontSize: 16,
     lineHeight: 24,
     color: "#1f2a1f",
   },
+
   missionReward: {
     height: 15,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
+
+  coinIcon: {
+    height: 15,
+    width: 15,
+  },
+
+  rewardText: {
+    fontSize: 10,
+  },
+
+  missionCountContainer: {
+    position: "absolute",
+    right: "20%",
+  },
+
   missionCount: {
     fontSize: 16,
     lineHeight: 24,
   },
+
   missionTick: {
     height: 24,
     width: 24,
     position: "absolute",
     right: "10%",
     backgroundColor: "#e8f5e9",
+  },
+
+  tickIcon: {
+    width: 24,
+    height: 24,
   },
 });

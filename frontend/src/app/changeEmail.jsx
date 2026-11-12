@@ -1,135 +1,186 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { TextField } from "@/components/TextField";
 import { IconComponent } from "@/components/IconComponent";
+import { apiRequest } from "@/services/api";
 
-const changeEmail = () => {
-  const insets = useSafeAreaInsets();
+const ChangeEmail = () => {
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   function goBack() {
     if (router.canGoBack()) router.back();
     else router.replace("/personalInfo");
   }
-  const [identifier1, setIdentifier1] = useState("");
-  const [identifier2, setIdentifier2] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
-  const [loginError, setLoginError] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const data = await apiRequest("/users/me");
+        setCurrentEmail(data.email || "");
+      } catch (err) {
+        Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถโหลดอีเมลปัจจุบันได้");
+      } finally {
+        setLoadingProfile(false);
+      }
+    }
+
+    fetchProfile();
+  }, []);
+
+  async function handleChangeEmail() {
+    const email = newEmail.trim();
+
+    if (!email) {
+      setError("กรุณากรอกอีเมลใหม่");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("รูปแบบอีเมลไม่ถูกต้อง");
+      return;
+    }
+
+    if (email.toLowerCase() === currentEmail.toLowerCase()) {
+      setError("อีเมลใหม่ต้องไม่ซ้ำกับอีเมลปัจจุบัน");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      await apiRequest("/users/me/email", {
+        method: "PUT",
+        body: JSON.stringify({ email }),
+      });
+
+      Alert.alert(
+        "ส่งคำขอเปลี่ยนอีเมลแล้ว",
+        "กรุณาตรวจสอบอีเมลใหม่และยืนยันตามลิงก์ที่ได้รับ"
+      );
+
+      router.back();
+    } catch (err) {
+      setError(err.message || "ไม่สามารถเปลี่ยนอีเมลได้");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Screen>
-      {/* header */}
-      <View
-        className="h-14 flex-row items-center"
-        style={{ justifyContent: "space-between" }}
-      >
+      <View style={styles.header}>
         <Pressable onPress={goBack} hitSlop={10}>
           <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></IconComponent>
+          />
         </Pressable>
         <Text style={styles.headerText}>อีเมล</Text>
+        <View style={styles.headerIcon} />
       </View>
-      {/* end of header */}
 
-      <View className="flex-1 bg-sage-light">
+      <View style={styles.content}>
         <View style={styles.changeArea}>
-          {/* ยืมของเนเน่มา */}
           <TextField
             icon={require("assets/icon/accountManagement/profile1_normal.svg")}
             placeholder="อีเมลของคุณ"
-            value={identifier1}
-            onChangeText={(value) => {
-              setIdentifier1(value);
-              setErrors((prev) => ({ ...prev, identifier: "" }));
-              setLoginError("");
-            }}
-            error={errors.identifier}
-          ></TextField>
-          {/* ยืมของเนเน่มา */}
+            value={loadingProfile ? "กำลังโหลด..." : currentEmail}
+            editable={false}
+          />
+
           <TextField
             icon={require("assets/icon/accountManagement/profile2_active.svg")}
             placeholder="เปลี่ยนอีเมล"
-            value={identifier2}
+            value={newEmail}
             onChangeText={(value) => {
-              setIdentifier2(value);
-              setErrors((prev) => ({ ...prev, identifier: "" }));
-              setLoginError("");
+              setNewEmail(value);
+              setError("");
             }}
-            error={errors.identifier}
-          ></TextField>
+            keyboardType="email-address"
+            autoCapitalize="none"
+            error={error}
+          />
         </View>
-        <Pressable>
-          <View style={styles.confirmButton}>
+
+        <Pressable
+          onPress={handleChangeEmail}
+          disabled={loading || loadingProfile}
+          style={({ pressed }) => [
+            styles.confirmButton,
+            pressed && styles.buttonPressed,
+            (loading || loadingProfile) && styles.buttonDisabled,
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
             <Text style={styles.confirmButtonText}>ยืนยันบัญชี</Text>
-          </View>
+          )}
         </Pressable>
       </View>
     </Screen>
   );
 };
 
-export default changeEmail;
-
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  headerText: {
-    fontSize: 24,
-    lineHeight: 36,
-    fontFamily: "BaiJamjuree_600SemiBold",
-    color: "rgb(232, 245, 233)",
-    position: "absolute",
-    left: "50%",
-    transform: [{ translateX: "-50%" }],
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerIcon: {
-    tintColor: "#E8F5E9",
     width: 24,
     height: 24,
-    marginLeft: 20,
   },
-  bodyIcon: {
-    tintColor: "#1F2A1F",
-    width: 24,
-    height: 24,
-    alignSelf: "center",
+  headerText: {
+    fontFamily: "BaiJamjuree_600SemiBold",
+    fontSize: 18,
+    color: "#354B3A",
   },
-  moreIcon: {
-    alignSelf: "center",
-    marginRight: "5%",
+  content: {
+    flex: 1,
+    backgroundColor: "#E8EEE5",
+    paddingHorizontal: 24,
+    paddingTop: 36,
   },
   changeArea: {
-    marginTop: "20%",
-    justifyContent: "space-around",
-    width: 250,
-    alignSelf: "center",
+    gap: 12,
   },
   confirmButton: {
-    width: 100,
-    height: 40,
-    backgroundColor: "#8FA07D",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    alignSelf: "center",
+    height: 52,
+    backgroundColor: "#526D50",
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "30%",
-    borderRadius: 10,
+    marginTop: 24,
   },
   confirmButtonText: {
-    fontSize: 16,
-    lineHeight: 24,
     fontFamily: "BaiJamjuree_600SemiBold",
-    color: "#E8F5E9",
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });
+
+export default ChangeEmail;

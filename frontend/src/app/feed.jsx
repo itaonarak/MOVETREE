@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -5,29 +6,24 @@ import {
   Text,
   View,
   StyleSheet,
-  Image,
 } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { Screen } from "@/components/Screen";
 import { PostCard } from "@/components/PostCard";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { apiRequest } from "@/services/api";
-import { IconComponent } from "@/components/IconComponent";
 
-const ICONS = {
-  map: require("assets/icon/feed/map1_normal.svg"),
-};
-
-// assets/icon/feed file names don't match their drawings — mapped by content.
 const HEADER_ICONS = {
-  location: require("assets/icon/feed/menu2,_active.svg"), // outline map pin
-  bell: require("assets/icon/feed/map2_active.svg"), // outline bell
+  location: require("assets/icon/feed/menu2,_active.svg"),
+  bell: require("assets/icon/feed/map2_active.svg"),
 };
-const HEADER_TINT = "#E8F5E9"; // light icons on the dark green header
+
+const HEADER_TINT = "#E8F5E9";
 
 export default function FeedScreen() {
   const insets = useSafeAreaInsets();
@@ -62,6 +58,7 @@ export default function FeedScreen() {
 
       setPosts(formattedPosts);
     } catch (err) {
+      console.log("FETCH FEED ERROR:", err);
       setError(err.message || "Failed to load posts");
     } finally {
       setLoading(false);
@@ -98,26 +95,23 @@ export default function FeedScreen() {
 
   return (
     <Screen padBottom={false}>
+      {/* Header */}
       <View className="h-14 flex-row items-center justify-between px-5">
-<<<<<<< HEAD
-        <Pressable hitSlop={10} accessibilityLabel="location">
+        <Pressable
+          onPress={() => router.push("/map")}
+          hitSlop={10}
+          accessibilityLabel="location"
+        >
           <Image
             source={HEADER_ICONS.location}
             style={{ width: 24, height: 24 }}
             tintColor={HEADER_TINT}
+            contentFit="contain"
           />
-=======
-        <Pressable onPress={() => router.push("/map")} hitSlop={10}>
-          <IconComponent
-            source={ICONS.map}
-            style={styles.headerIcon}
-          ></IconComponent>
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         </Pressable>
 
         <Logo height={30} />
 
-<<<<<<< HEAD
         <Pressable
           onPress={() => router.push("/notifications")}
           hitSlop={10}
@@ -127,14 +121,12 @@ export default function FeedScreen() {
             source={HEADER_ICONS.bell}
             style={{ width: 24, height: 24 }}
             tintColor={HEADER_TINT}
+            contentFit="contain"
           />
-=======
-        <Pressable onPress={() => router.push("/notifications")} hitSlop={10}>
-          <Ionicons name="notifications-outline" size={24} color="#E8F5E9" />
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
         </Pressable>
       </View>
 
+      {/* Feed */}
       <View className="flex-1 bg-sage-light">
         {loading ? (
           <View className="flex-1 items-center justify-center">
@@ -143,6 +135,9 @@ export default function FeedScreen() {
         ) : error ? (
           <View className="flex-1 items-center justify-center px-5">
             <Text className="text-center text-ink">{error}</Text>
+            <Pressable onPress={() => fetchPosts()} className="mt-4">
+              <Text className="font-semibold text-brand">ลองอีกครั้ง</Text>
+            </Pressable>
           </View>
         ) : (
           <FlatList
@@ -151,7 +146,11 @@ export default function FeedScreen() {
             renderItem={({ item }) => <PostCard post={item} />}
             ListHeaderComponent={
               <View className="items-center pb-1">
-                <Ionicons name="caret-down" size={14} color="#8A9E7A" />
+                <Ionicons
+                  name="caret-down"
+                  size={14}
+                  color="#8A9E7A"
+                />
               </View>
             }
             ListEmptyComponent={
@@ -174,11 +173,3 @@ export default function FeedScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  headerIcon: {
-    tintColor: "#E8F5E9",
-    width: 24,
-    height: 24,
-  },
-});

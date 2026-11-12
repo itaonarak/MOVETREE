@@ -1,25 +1,39 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import React from "react";
+
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { Screen } from "@/components/Screen";
 import { BottomNav } from "@/components/BottomNav";
-<<<<<<< HEAD
-import { useOutfit } from "@/services/outfit";
-=======
 import { IconComponent } from "@/components/IconComponent";
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
+import { useOutfit } from "@/services/outfit";
+import { Avatar } from "@/components/Avatar";
+import { apiRequest } from "@/services/api";
 
-const profile = () => {
+const Profile = () => {
   const insets = useSafeAreaInsets();
-  const { coins } = useOutfit();
-  function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace("/feed");
-  }
+  const { coins, equipped } = useOutfit();
+
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const data = await apiRequest("/users/me");
+        setProfile(data);
+      } catch (error) {
+        console.error("Failed to load profile:", error);
+      } finally {
+        setProfileLoading(false);
+      }
+    }
+
+    fetchProfile();
+  }, []);
 
   function handleTab(tab) {
-    // TODO: navigate to camera / tasks / profile pages once they exist
     if (tab === "home") router.push("/feed");
     if (tab === "camera") router.push("/Camera");
     if (tab === "tasks") router.push("/mission");
@@ -43,225 +57,256 @@ const profile = () => {
       case "friendsList":
         router.push("/friendsList");
         break;
-
       default:
         break;
     }
   }
+
   return (
     <Screen>
-      {/* header */}
+      {/* Header */}
       <View
         className="h-14 flex-row items-center px-5"
         style={{ justifyContent: "space-between" }}
       >
-        <IconComponent
-          source={require("assets/icon/header/forest_normal.svg")}
-          style={styles.headerIcon}
-        ></IconComponent>
+        <View style={styles.headerIcon} />
+
         <Text style={styles.headerText}>โปรไฟล์</Text>
+
         <Pressable
-          onPress={() => {
-            handleProfilePages("friendsList");
-          }}
+          onPress={() => handleProfilePages("friendsList")}
           hitSlop={10}
         >
           <IconComponent
             source={require("assets/icon/header/friends1_normal.svg")}
             style={styles.headerIcon}
-          ></IconComponent>
+          />
         </Pressable>
       </View>
-      {/* end of header */}
 
+      {/* Profile content */}
       <View className="flex-1 bg-sage-light">
-        {/* presumably an area for the avatar */}
+        {/* Avatar preview */}
         <View style={styles.avatarPreviewZone}>
           <View style={styles.avatarPreview}>
-            <Image source={require("assets/profile/demo.png")}></Image>
-            <IconComponent
-              source={require("assets/icon/profile/dress1_normal.svg")}
-              style={[styles.dressIcon, styles.bodyIcon]}
-            ></IconComponent>
-            <Text style={styles.profileUsernameText}>วอดส์</Text>
+            <View style={styles.avatarImage}>
+              <Avatar
+                outfit={equipped}
+                style={{ width: "100%", height: "100%" }}
+              />
+            </View>
 
+            <Pressable
+              onPress={() => router.push("/get_dress")}
+              hitSlop={10}
+              style={styles.dressIcon}
+            >
+              <IconComponent
+                source={require("assets/icon/profile/dress1_normal.svg")}
+                style={styles.bodyIcon}
+              />
+            </Pressable>
+
+            <Text style={styles.profileUsernameText}>
+              {profileLoading
+                ? "กำลังโหลด..."
+                : profile?.username ?? "ไม่สามารถโหลดข้อมูลได้"}
+            </Text>
+
+            {/* Coins */}
             <View style={styles.currentCoin}>
               <IconComponent
                 source={require("assets/icon/profile/coin_normal.svg")}
-<<<<<<< HEAD
-              ></Image>
-              <Text style={styles.currentCoinText}>{coins}</Text>
-=======
-                style={{ width: 24, height: 24 }}
-              ></IconComponent>
-              <Text style={styles.currentCoinText}>999</Text>
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
+                style={styles.bodyIcon}
+              />
+
+              <Text style={styles.currentCoinText}>
+                {coins}
+              </Text>
             </View>
           </View>
         </View>
-        {/* end of an area for the avatar */}
 
-        {/* to other 4 pages */}
+        {/* Profile menu */}
         <View>
-          {/* ข้อมูลส่วนตัว */}
+          {/* Personal information */}
           <Pressable
-            onPress={() => {
-              handleProfilePages("personalInfo");
-            }}
+            onPress={() => handleProfilePages("personalInfo")}
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <IconComponent
                   source={require("assets/icon/profile/information_normal.svg")}
                   style={styles.bodyIcon}
-                ></IconComponent>
-                <Text style={styles.profileTabsText}>ข้อมูลส่วนตัว</Text>
+                />
+                <Text style={styles.profileTabsText}>
+                  ข้อมูลส่วนตัว
+                </Text>
               </View>
+
               <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></IconComponent>
+              />
             </View>
           </Pressable>
 
-          {/* ประวัติโพสต์ */}
+          {/* Post history */}
           <Pressable
-            onPress={() => {
-              handleProfilePages("postHistory");
-            }}
+            onPress={() => handleProfilePages("postHistory")}
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <IconComponent
                   source={require("assets/icon/profile/postHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></IconComponent>
-                <Text style={styles.profileTabsText}>ประวัติโพสต์</Text>
+                />
+                <Text style={styles.profileTabsText}>
+                  ประวัติโพสต์
+                </Text>
               </View>
+
               <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></IconComponent>
+              />
             </View>
           </Pressable>
 
-          {/* ประวัติเช็กอิน */}
+          {/* Check-in history */}
           <Pressable
-            onPress={() => {
-              handleProfilePages("checkinHistory");
-            }}
+            onPress={() => handleProfilePages("checkinHistory")}
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <IconComponent
                   source={require("assets/icon/profile/checkinHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></IconComponent>
-                <Text style={styles.profileTabsText}>ประวัติเช็กอิน</Text>
+                />
+                <Text style={styles.profileTabsText}>
+                  ประวัติเช็กอิน
+                </Text>
               </View>
+
               <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></IconComponent>
+              />
             </View>
           </Pressable>
 
-          {/* ประวัติภารกิจ */}
+          {/* Mission history */}
           <Pressable
-            onPress={() => {
-              handleProfilePages("missionHistory");
-            }}
+            onPress={() => handleProfilePages("missionHistory")}
           >
             <View style={styles.profileTabs}>
               <View style={styles.profileTabsInfo}>
                 <IconComponent
                   source={require("assets/icon/profile/missionHistory_normal.svg")}
                   style={styles.bodyIcon}
-                ></IconComponent>
-                <Text style={styles.profileTabsText}>ประวัติภารกิจ</Text>
+                />
+                <Text style={styles.profileTabsText}>
+                  ประวัติภารกิจ
+                </Text>
               </View>
+
               <IconComponent
                 source={require("assets/icon/profile/more_normal.svg")}
                 style={[styles.bodyIcon, styles.moreIcon]}
-              ></IconComponent>
+              />
             </View>
           </Pressable>
         </View>
-        {/* end of to other 4 pages */}
       </View>
-      {/* bottom nav bar */}
+
+      {/* Bottom navigation */}
       <BottomNav active="profile" onPress={handleTab} />
     </Screen>
   );
 };
 
-export default profile;
+export default Profile;
 
 const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    justifyContent: "center",
-  },
   headerText: {
     fontSize: 24,
     lineHeight: 36,
     fontFamily: "BaiJamjuree_600SemiBold",
     color: "rgb(232, 245, 233)",
   },
+
   headerIcon: {
     tintColor: "#E8F5E9",
     width: 24,
     height: 24,
   },
+
   bodyIcon: {
     tintColor: "#1F2A1F",
     width: 24,
     height: 24,
   },
+
   avatarPreviewZone: {
     width: "100%",
     flexDirection: "column",
   },
+
   avatarPreview: {
     marginTop: "10%",
     alignItems: "center",
     marginHorizontal: "auto",
   },
+
+  avatarImage: {
+    width: 120,
+    aspectRatio: 600 / 1490,
+  },
+
   dressIcon: {
     top: "10%",
-    right: "5%",
+    right: "-10%",
     position: "absolute",
+    zIndex: 10,
+    elevation: 10,
   },
+
   moreIcon: {
     alignSelf: "center",
     marginRight: "5%",
   },
+
   profileUsernameText: {
     fontSize: 24,
     lineHeight: 36,
     fontFamily: "BaiJamjuree_600SemiBold",
   },
+
   currentCoin: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
+
   currentCoinText: {
     fontSize: 14,
     lineHeight: 22,
     fontFamily: "BaiJamjuree_400Regular",
   },
+
   profileTabs: {
     height: 50,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
   },
+
   profileTabsText: {
     fontSize: 16,
     lineHeight: 24,
     fontFamily: "BaiJamjuree_400Regular",
   },
+
   profileTabsInfo: {
     flexDirection: "row",
     alignItems: "center",

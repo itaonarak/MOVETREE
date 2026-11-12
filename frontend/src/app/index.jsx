@@ -7,6 +7,7 @@ import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
 import { apiRequest } from "@/services/api";
 import { saveToken } from "@/services/token";
+import { refreshOutfit } from "@/services/outfit";
 
 const ICONS = {
   profile: require("../../assets/icon/login/profile.svg"),
@@ -49,9 +50,12 @@ export default function LoginScreen() {
 
       await saveToken(data.access_token);
 
+      // Load coins, owned items and outfit for this account.
+      await refreshOutfit();
+
       console.log("Login successful:", data);
 
-      router.replace("/feed");
+router.replace("/feed");
       
     } catch (error) {
       setLoginError(error.message);

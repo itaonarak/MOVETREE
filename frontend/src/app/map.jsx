@@ -15,11 +15,6 @@ import { IconComponent } from "@/components/IconComponent";
 import { apiRequest } from "@/services/api";
 
 const Map = () => {
-  function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace("/feed");
-  }
-
   const initialRegion = {
     latitude: 13.729904514961802,
     longitude: 100.53998733982104,
@@ -27,21 +22,32 @@ const Map = () => {
     longitudeDelta: 0.0421,
   };
 
-  const [selectedLocation, setSelectedLocation] = useState({
-    latitude: 13.729904514961802,
-    longitude: 100.53998733982104,
-  });
-
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch places from Backend
+  function goBack() {
+    if (router.canGoBack()) router.back();
+    else router.replace("/feed");
+  }
+
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const data = await apiRequest("/places/");
-        setPlaces(data.places || []);
+
+        console.log("PLACES RESPONSE:", data);
+
+        const validPlaces = (data.places || []).filter(
+          (place) =>
+            place.area_id &&
+            Number.isFinite(Number(place.latitude)) &&
+            Number.isFinite(Number(place.longitude))
+        );
+
+        console.log("VALID PLACES:", validPlaces);
+
+        setPlaces(validPlaces);
       } catch (err) {
         console.error("FETCH PLACES ERROR:", err);
         setError(err.message || "ไม่สามารถโหลดสถานที่ได้");
@@ -53,15 +59,12 @@ const Map = () => {
     fetchPlaces();
   }, []);
 
-  const handleMapPress = (e) => {
-    setSelectedLocation(e.nativeEvent.coordinate);
-  };
-
   const handlePlacePress = (place) => {
     router.push({
       pathname: "/locationDetails",
       params: {
         id: place.area_id,
+        area_id: place.area_id,
         title: place.name,
         latitude: String(place.latitude),
         longitude: String(place.longitude),
@@ -71,9 +74,6 @@ const Map = () => {
         activities: JSON.stringify([]),
         activitiesImages: JSON.stringify([]),
         activitiesDetails: JSON.stringify([]),
-        images: JSON.stringify(
-          place.image_url ? [place.image_url] : []
-        ),
       },
     });
   };
@@ -98,11 +98,9 @@ const Map = () => {
         <MapView
           style={styles.map}
           initialRegion={initialRegion}
-          showsUserLocation={true}
+          showsUserLocation={false}
           showsPoi={false}
-          onPress={handleMapPress}
         >
-          {/* Markers from Backend */}
           {places.map((place) => (
             <Marker
               key={place.area_id}
@@ -113,6 +111,7 @@ const Map = () => {
               title={place.name}
               description={place.address || place.description || ""}
               onPress={() => handlePlacePress(place)}
+              pinColor="red"
             >
               <View style={styles.customPoiMarker}>
                 <Image
@@ -122,15 +121,6 @@ const Map = () => {
               </View>
             </Marker>
           ))}
-
-          {/* User-selected marker */}
-          {selectedLocation && (
-            <Marker
-              coordinate={selectedLocation}
-              title="Selected Location"
-              pinColor="blue"
-            />
-          )}
         </MapView>
 
         {loading && (
@@ -143,6 +133,12 @@ const Map = () => {
         {!!error && (
           <View style={styles.statusContainer}>
             <Text style={{ color: "red" }}>{error}</Text>
+          </View>
+        )}
+
+        {!loading && !error && places.length === 0 && (
+          <View style={styles.statusContainer}>
+            <Text>ไม่พบข้อมูลสถานที่</Text>
           </View>
         )}
       </View>

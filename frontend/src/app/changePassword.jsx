@@ -1,73 +1,120 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+
 import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Screen } from "@/components/Screen";
 import { TextField } from "@/components/TextField";
 import { IconComponent } from "@/components/IconComponent";
+import { apiRequest } from "@/services/api";
 
-const changePassword = () => {
-  const insets = useSafeAreaInsets();
+const ChangePassword = () => {
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   function goBack() {
     if (router.canGoBack()) router.back();
     else router.replace("/personalInfo");
   }
-  const [identifier1, setIdentifier1] = useState("");
-  const [identifier2, setIdentifier2] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
-  const [loginError, setLoginError] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  async function handleChangePassword() {
+    if (!newPassword || !confirmPassword) {
+      setError("กรุณากรอกรหัสผ่านให้ครบทั้งสองช่อง");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setError("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("รหัสผ่านทั้งสองช่องไม่ตรงกัน");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      await apiRequest("/users/me/password", {
+        method: "PUT",
+        body: JSON.stringify({ password: newPassword }),
+      });
+
+      setNewPassword("");
+      setConfirmPassword("");
+
+      Alert.alert("สำเร็จ", "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว");
+      router.back();
+    } catch (err) {
+      setError(err.message || "ไม่สามารถเปลี่ยนรหัสผ่านได้");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Screen>
-      {/* header */}
-      <View
-        className="h-14 flex-row items-center"
-        style={{ justifyContent: "space-between" }}
-      >
+      <View style={styles.header}>
         <Pressable onPress={goBack} hitSlop={10}>
           <IconComponent
             source={require("assets/icon/header/back_normal.svg")}
             style={styles.headerIcon}
-          ></IconComponent>
+          />
         </Pressable>
         <Text style={styles.headerText}>เปลี่ยนรหัสผ่าน</Text>
+        <View style={styles.headerIcon} />
       </View>
-      {/* end of header */}
 
-      <View className="flex-1 bg-sage-light">
+      <View style={styles.content}>
         <View style={styles.changeArea}>
-          {/* ยืมของเนเน่มา */}
           <TextField
             icon={require("assets/icon/accountManagement/key1_normal.svg")}
             placeholder="ตั้งรหัสผ่านใหม่"
-            value={identifier1}
+            value={newPassword}
             onChangeText={(value) => {
-              setIdentifier1(value);
-              setErrors((prev) => ({ ...prev, identifier: "" }));
-              setLoginError("");
+              setNewPassword(value);
+              setError("");
             }}
-            error={errors.identifier}
-          ></TextField>
-          {/* ยืมของเนเน่มา */}
+            secure
+            error={error}
+          />
+
           <TextField
             icon={require("assets/icon/accountManagement/key2_active.svg")}
             placeholder="ยืนยันรหัสผ่านใหม่"
-            value={identifier2}
+            value={confirmPassword}
             onChangeText={(value) => {
-              setIdentifier2(value);
-              setErrors((prev) => ({ ...prev, identifier: "" }));
-              setLoginError("");
+              setConfirmPassword(value);
+              setError("");
             }}
-            error={errors.identifier}
-          ></TextField>
+            secure
+          />
         </View>
 
-        <Pressable>
-          <View style={styles.confirmButton}>
+        <Pressable
+          onPress={handleChangePassword}
+          disabled={loading}
+          style={({ pressed }) => [
+            styles.confirmButton,
+            pressed && styles.buttonPressed,
+            loading && styles.buttonDisabled,
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
             <Text style={styles.confirmButtonText}>เปลี่ยนรหัสผ่าน</Text>
-          </View>
+          )}
         </Pressable>
 
         <View style={styles.noticeBox}>
@@ -81,79 +128,62 @@ const changePassword = () => {
   );
 };
 
-export default changePassword;
-
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  headerText: {
-    fontSize: 24,
-    lineHeight: 36,
-    fontFamily: "BaiJamjuree_600SemiBold",
-    color: "rgb(232, 245, 233)",
-    position: "absolute",
-    left: "50%",
-    transform: [{ translateX: "-50%" }],
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerIcon: {
-    tintColor: "#E8F5E9",
     width: 24,
     height: 24,
-    marginLeft: 20,
   },
-  bodyIcon: {
-    tintColor: "#1F2A1F",
-    width: 24,
-    height: 24,
-    alignSelf: "center",
+  headerText: {
+    fontFamily: "BaiJamjuree_600SemiBold",
+    fontSize: 18,
+    color: "#354B3A",
   },
-  moreIcon: {
-    alignSelf: "center",
-    marginRight: "5%",
+  content: {
+    flex: 1,
+    backgroundColor: "#E8EEE5",
+    paddingHorizontal: 24,
+    paddingTop: 36,
   },
   changeArea: {
-    marginTop: "20%",
-    justifyContent: "space-around",
-    width: 250,
-    alignSelf: "center",
+    gap: 12,
   },
   confirmButton: {
-    width: 120,
-    height: 40,
-    backgroundColor: "#8FA07D",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    alignSelf: "center",
+    height: 52,
+    backgroundColor: "#526D50",
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "30%",
-    borderRadius: 10,
+    marginTop: 24,
   },
   confirmButtonText: {
-    fontSize: 16,
-    lineHeight: 24,
     fontFamily: "BaiJamjuree_600SemiBold",
-    color: "#E8F5E9",
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   noticeBox: {
-    marginTop: "20%",
-    borderRadius: 10,
-    backgroundColor: "rgba(143, 160, 125, 0.5)",
-    width: "90%",
-    height: "10%",
-    alignSelf: "center",
-    justifyContent: "center",
+    backgroundColor: "#DCE6D8",
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 24,
   },
   noticeText: {
-    margin: "5%",
     fontFamily: "BaiJamjuree_400Regular",
-    fontSize: 12,
-    lineHeight: 18,
-    color: "#1F2A1F",
+    fontSize: 13,
+    lineHeight: 21,
+    color: "#526D50",
   },
 });
+
+export default ChangePassword;

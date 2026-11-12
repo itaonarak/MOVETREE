@@ -1,21 +1,12 @@
 
-import base64
-import binascii
-import os
-import re
-import uuid
 from typing import Literal
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from app.database import supabase_admin
 from app.dependencies import get_current_user
 
-# Public Supabase Storage bucket that holds post photos
-POST_IMAGE_BUCKET = os.getenv("POST_IMAGE_BUCKET", "post-images")
-MAX_IMAGE_BYTES = 5 * 1024 * 1024
-DATA_URI_RE = re.compile(r"^data:image/(jpeg|jpg|png);base64,(.+)$", re.DOTALL)
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
@@ -37,7 +28,7 @@ def get_social_feed(current_user: dict = Depends(get_current_user)):
                 post_type,
                 check_in_id,
                 created_at,
-                users (
+                users!posts_user_id_fkey (
                     username,
                     avatar_url
                 ),
@@ -82,10 +73,7 @@ def get_my_posts(current_user: dict = Depends(get_current_user)):
                 post_type,
                 check_in_id,
                 created_at,
-                users (
-                    username,
-                    avatar_url
-                ),
+                users!posts_user_id_fkey(username, avatar_url),
                 collections (
                     image_url,
                     area_id,
@@ -110,27 +98,10 @@ def get_my_posts(current_user: dict = Depends(get_current_user)):
         )
 
 
-_bucket_ready = False
-
-
-def ensure_image_bucket():
-    """Create the public post-image bucket the first time it's needed."""
-    global _bucket_ready
-    if _bucket_ready:
-        return
-    existing = {b.name for b in supabase_admin.storage.list_buckets()}
-    if POST_IMAGE_BUCKET not in existing:
-        supabase_admin.storage.create_bucket(
-            POST_IMAGE_BUCKET, options={"public": True}
-        )
-    _bucket_ready = True
-
-
 class PostCreate(BaseModel):
-    image: str  # data URI (data:image/jpeg;base64,...) of the photo
+    check_in_id: UUID
     caption: str = Field(default="", max_length=500)
-    location: str = Field(default="", max_length=200)  # typed place name
-    visibility: Literal["public", "friends", "private"] = "public"
+    visibility: Literal["public", "friends"] = "public"
 
 
 @router.post("/")
@@ -141,52 +112,47 @@ def create_post(
     client = current_user["client"]
     user_id = current_user["user_id"]
 
-    match = DATA_URI_RE.match(post.image)
-    if not match:
-        raise HTTPException(status_code=400, detail="Invalid image")
     try:
-        image_bytes = base64.b64decode(match.group(2), validate=True)
-    except (binascii.Error, ValueError):
-        raise HTTPException(status_code=400, detail="Invalid image")
-    if len(image_bytes) > MAX_IMAGE_BYTES:
-        raise HTTPException(status_code=413, detail="Image is too large")
+        # Find a successful check-in owned by the current user
+        checkin_response = (
+            client.table("check_ins")
+            .select("check_in_id, user_id, area_id, photo_url, status")
+            .eq("check_in_id", str(post.check_in_id))
+            .eq("user_id", user_id)
+            .eq("status", "success")
+            .maybe_single()
+            .execute()
+        )
 
-    ext = "png" if match.group(1) == "png" else "jpg"
-    content_type = "image/png" if ext == "png" else "image/jpeg"
+        checkin = checkin_response.data
 
-    try:
-        # Upload the photo; stored under the user's folder
-        ensure_image_bucket()
-        path = f"{user_id}/{uuid.uuid4()}.{ext}"
-        storage = supabase_admin.storage.from_(POST_IMAGE_BUCKET)
-        storage.upload(path, image_bytes, {"content-type": content_type})
-        image_url = storage.get_public_url(path)
-
-        # Location is free text for now: link it to a green area when the name matches
-        area_id = None
-        location = post.location.strip()
-        if location:
-            area_response = (
-                client.table("green_areas")
-                .select("area_id")
-                .ilike("name", location)
-                .limit(1)
-                .execute()
+        if not checkin:
+            raise HTTPException(
+                status_code=400,
+                detail="A successful check-in is required before posting"
             )
-            if area_response.data:
-                area_id = area_response.data[0]["area_id"]
 
+        # Create collection using the check-in photo and selected area
         collection_response = (
             client.table("collections")
             .insert({
                 "user_id": user_id,
-                "image_url": image_url,
-                "area_id": area_id,
+                "area_id": checkin["area_id"],
+                "image_url": checkin["photo_url"],
+                "caption": post.caption.strip(),
             })
             .execute()
         )
+
+        if not collection_response.data:
+            raise HTTPException(
+                status_code=400,
+                detail="Could not create collection"
+            )
+
         collection_id = collection_response.data[0]["collection_id"]
 
+        # Create post linked to the successful check-in
         post_response = (
             client.table("posts")
             .insert({
@@ -194,7 +160,8 @@ def create_post(
                 "collection_id": collection_id,
                 "caption": post.caption.strip(),
                 "visibility": post.visibility,
-                "post_type": "photo",
+                "post_type": "checkin",
+                "check_in_id": str(post.check_in_id),
             })
             .execute()
         )

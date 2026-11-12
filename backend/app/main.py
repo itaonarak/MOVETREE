@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-from app.routers import auth, checkins, health, missions, places, posts, root
+from app.routers import auth, checkins, health, missions, places, posts, root, points, users, friends, notifications
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -12,7 +12,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origins=[
+        "http://localhost:8081",
+        "http://127.0.0.1:8081",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,3 +28,7 @@ app.include_router(places.router)
 app.include_router(missions.router)
 app.include_router(checkins.router)
 app.include_router(posts.router)
+app.include_router(points.router)
+app.include_router(users.router)
+app.include_router(friends.router)
+app.include_router(notifications.router)

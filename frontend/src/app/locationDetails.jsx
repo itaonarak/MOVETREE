@@ -39,17 +39,23 @@ const LocationDetails = () => {
   }
 
   function goToCheckin() {
-    router.push({
-      pathname: "/checkin",
-      params: {
-        area_id: params.id,
-        title,
-        latitude: params.latitude,
-        longitude: params.longitude,
-        image_url: imageUrl,
-      },
-    });
-  }
+  const areaId = params.area_id || params.id;
+
+  console.log("LOCATION DETAILS:", params);
+  console.log("AREA ID:", areaId);
+  console.log("PLACE NAME:", title);
+
+  router.push({
+    pathname: "/Camera",
+    params: {
+      mode: "checkin",
+      area_id: areaId,
+      title,
+      latitude: params.latitude,
+      longitude: params.longitude,
+    },
+  });
+}
 
   return (
     <Screen>

@@ -1,8 +1,8 @@
-// Holds the photo being turned into a post while moving Camera -> upload.
-// Kept in memory instead of route params because photos can be large data URIs.
+
+// Holds the photo and related information while moving between screens.
 let draft = null;
 
-// { uri, showAvatar, outfit }
+// { uri, showAvatar, outfit, mode, areaId, latitude, longitude, placeName }
 export function setDraftPost(next) {
   draft = next;
 }

@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+
 import React from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { IconComponent } from "./IconComponent";
 
 export function Friend({
@@ -14,47 +14,49 @@ export function Friend({
 }) {
   return (
     <View style={styles.friendsList}>
-<<<<<<< HEAD
-      <Image
-        source={require("assets/icon/missionHistory/flower.png")}
-        style={{
-          marginLeft: "1rem",
-=======
+      {/* Friend icon */}
       <IconComponent
         source={require("assets/icon/missionHistory/flower2_normal.svg")}
-        style={{
-          width: 24,
-          height: 24,
-          marginLeft: 20,
-          tintColor: "#5F6B5F",
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
-        }}
-      ></IconComponent>
+        style={styles.flowerIcon}
+      />
 
-      <Text style={[styles.friendsListText, styles.text]}>{name}</Text>
+      {/* Friend name */}
+      <Text style={[styles.friendsListText, styles.text]}>
+        {name}
+      </Text>
 
-      {/* Show unfriend button only if they are currently a friend */}
+      {/* Unfriend button */}
       {isFriend && !isPending && (
-        <Pressable onPress={() => onUnfriend(id)} style={styles.unfriendButton}>
-<<<<<<< HEAD
-          <Ionicons name="close-outline" size={24} color="#1F2A1F" />
-=======
+        <Pressable
+          onPress={() => onUnfriend(id)}
+          style={styles.unfriendButton}
+        >
           <IconComponent
             source={require("assets/icon/friendsList/X_normal.svg")}
-            style={[styles.bodyIcon]}
-          ></IconComponent>
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
+            style={styles.bodyIcon}
+          />
         </Pressable>
       )}
 
-      {/* Show decision box buttons only if friendship is pending */}
+      {/* Accept / Reject buttons */}
       {isPending && (
         <View style={styles.decisionBox}>
-          <Pressable onPress={() => onAccept(id)} style={styles.decisionBoxY}>
-            <Text style={[styles.text, styles.decisionBoxText]}>ยอมรับ</Text>
+          <Pressable
+            onPress={() => onAccept(id)}
+            style={styles.decisionBoxY}
+          >
+            <Text style={[styles.text, styles.decisionBoxText]}>
+              ยอมรับ
+            </Text>
           </Pressable>
-          <Pressable onPress={() => onReject(id)} style={styles.decisionBoxN}>
-            <Text style={[styles.text, styles.decisionBoxText]}>ปฏิเสธ</Text>
+
+          <Pressable
+            onPress={() => onReject(id)}
+            style={styles.decisionBoxN}
+          >
+            <Text style={[styles.text, styles.decisionBoxText]}>
+              ปฏิเสธ
+            </Text>
           </Pressable>
         </View>
       )}
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "BaiJamjuree_400Regular",
   },
+
   friendsList: {
     backgroundColor: "#e8f5e9",
     height: 50,
@@ -78,11 +81,25 @@ const styles = StyleSheet.create({
     borderColor: "#d9d9d9",
     borderWidth: 1,
   },
+
+  flowerIcon: {
+    width: 24,
+    height: 24,
+    marginLeft: 20,
+    tintColor: "#5F6B5F",
+  },
+
+  bodyIcon: {
+    width: 24,
+    height: 24,
+  },
+
   friendsListText: {
     fontSize: 16,
     lineHeight: 24,
     color: "#1f2a1f",
   },
+
   unfriendButton: {
     height: 24,
     width: 24,
@@ -90,6 +107,7 @@ const styles = StyleSheet.create({
     right: 20,
     backgroundColor: "#e8f5e9",
   },
+
   decisionBox: {
     width: 80,
     height: 20,
@@ -99,17 +117,20 @@ const styles = StyleSheet.create({
     alignContent: "center",
     position: "absolute",
   },
+
   decisionBoxText: {
     fontSize: 10,
     color: "#e8f5e9",
     alignSelf: "center",
   },
+
   decisionBoxY: {
     backgroundColor: "rgb(62, 81, 59)",
     width: "50%",
     justifyContent: "center",
     alignContent: "center",
   },
+
   decisionBoxN: {
     backgroundColor: "#5f6b5f",
     width: "50%",

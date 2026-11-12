@@ -24,6 +24,8 @@ def get_current_user(
 
         return {
             "user_id": str(response.user.id),
+            "email": response.user.email,
+            "access_token": token,
             "client": client
         }
 

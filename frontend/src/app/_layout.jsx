@@ -1,3 +1,4 @@
+
 import "../../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -23,32 +24,43 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
+
       <Stack
-        screenOptions={{ headerShown: false, animation: "slide_from_right" }}
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="register" />
         <Stack.Screen name="assistance" />
+
+        {/* Main pages */}
         <Stack.Screen name="feed" />
         <Stack.Screen name="notifications" />
         <Stack.Screen name="profile" />
+
+        {/* Profile pages */}
         <Stack.Screen name="personalInfo" />
         <Stack.Screen name="postHistory" />
         <Stack.Screen name="missionHistory" />
         <Stack.Screen name="friendsList" />
-<<<<<<< HEAD
-        <Stack.Screen name="Camera" />
-        <Stack.Screen name="get_dress" />
-        <Stack.Screen name="mission" />
-        <Stack.Screen name="upload" />
-=======
         <Stack.Screen name="checkinHistory" />
         <Stack.Screen name="changeEmail" />
         <Stack.Screen name="changePassword" />
+
+        {/* Camera and upload */}
+        <Stack.Screen name="Camera" />
+        <Stack.Screen name="upload" />
+        <Stack.Screen name="get_dress" />
+
+        {/* Mission pages */}
+        <Stack.Screen name="mission" />
+
+        {/* Map and location pages */}
         <Stack.Screen name="map" />
         <Stack.Screen name="locationDetails" />
         <Stack.Screen name="activitiesDetails" />
->>>>>>> 3a97de51a9c46dd9a9811599bc93f00105e04160
       </Stack>
     </>
   );
