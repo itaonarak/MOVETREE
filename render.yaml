@@ -15,3 +15,16 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+  - type: web
+    name: movetree-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: EXPO_PUBLIC_API_URL
+        value: https://movetree-api-e0gd.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /
